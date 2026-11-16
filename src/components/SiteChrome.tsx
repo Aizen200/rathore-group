@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, ArrowUp, Menu, X } from "lucide-react";
+import { ArrowUpRight, ArrowUp, Mail, Phone, X } from "lucide-react";
 import { company } from "@/data/company";
 import { usePathname } from "next/navigation";
 import RevealText from "./RevealText";
@@ -10,7 +10,7 @@ export function Logo({ small = false }: { small?: boolean }) {
   return (
     <Link className={`brand ${small ? "brand-small" : ""}`} href="/">
       <span className="crest">
-        <img src="/images/logo-original.png" alt="" width="205" height="50" />
+        <img src="/images/crest.webp" alt="" width="273" height="288" />
       </span>
       <span className="brand-text">
         RATHORE GROUP<small>BUILDING A LEGACY SINCE 1994</small>
@@ -27,9 +27,19 @@ const links = [
 ];
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [pill, setPill] = useState<{ left: number; width: number } | null>(
+    null,
+  );
   const dialog = useRef<HTMLDialogElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
   const [active, setActive] = useState(pathname);
+  const norm = (h: string) => h.replace(/\/$/, "");
+
   useEffect(() => {
     setActive(pathname);
     if (pathname !== "/") return;
@@ -54,78 +64,193 @@ export function Navbar() {
     });
     return () => observer.disconnect();
   }, [pathname]);
+
+  // Condense after a little scroll; tuck away while scrolling down, return on scroll up.
   useEffect(() => {
-    const handle = () => setScrolled(window.scrollY > 30);
+    let last = window.scrollY;
+    const handle = () => {
+      const y = window.scrollY;
+      setScrolled(y > 30);
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      headerRef.current?.style.setProperty(
+        "--hdr-progress",
+        String(max > 0 ? Math.min(y / max, 1) : 0),
+      );
+      if (Math.abs(y - last) > 6) {
+        setHidden(y > last && y > 420);
+        last = y;
+      }
+    };
     handle();
     window.addEventListener("scroll", handle, { passive: true });
     return () => window.removeEventListener("scroll", handle);
   }, []);
+
+  // Sliding gold rule follows the hovered link, falling back to the active one.
+  const target = hovered ?? active;
+  useEffect(() => {
+    const nav = navRef.current;
+    const link = nav?.querySelector<HTMLElement>(
+      `[data-href="${norm(target)}"]`,
+    );
+    if (!nav || !link) return setPill(null);
+    setPill({ left: link.offsetLeft, width: link.offsetWidth });
+  }, [target, scrolled]);
+
+  function openMenu() {
+    dialog.current?.showModal();
+    setMenuOpen(true);
+  }
+  function closeMenu() {
+    dialog.current?.close();
+  }
+
   return (
     <>
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <header className={`navbar ${scrolled ? "navbar-scrolled" : ""}`}>
-        <div className="nav-inner">
-          <Logo />
-          <nav aria-label="Main navigation">
-            {links.map(([label, href]) => (
+      <header
+        ref={headerRef}
+        className={`hdr${scrolled ? " is-scrolled" : ""}${hidden && !menuOpen ? " is-hidden" : ""}`}
+      >
+        <div className="hdr-strip">
+          <span>Est. {company.founded} · Mumbai, India</span>
+          <span className="hdr-strip-contact">
+            <a href={`tel:${company.phone.replace(/[^0-9+]/g, "")}`}>
+              <Phone size={12} /> {company.phone}
+            </a>
+            <a href={`mailto:${company.email}`}>
+              <Mail size={12} /> {company.email}
+            </a>
+          </span>
+        </div>
+        <div className="hdr-bar-wrap">
+          <div className="hdr-bar">
+            <Link
+              className="hdr-brand"
+              href="/"
+              aria-label="Rathore Group home"
+            >
+              <img src="/images/crest.webp" alt="" width="273" height="288" />
+              <span>
+                <strong>Rathore Group</strong>
+                <small>Building a legacy since {company.founded}</small>
+              </span>
+            </Link>
+            <nav
+              ref={navRef}
+              className="hdr-nav"
+              aria-label="Main navigation"
+              onMouseLeave={() => setHovered(null)}
+            >
+              <span
+                className="hdr-rule"
+                aria-hidden="true"
+                style={
+                  pill
+                    ? {
+                        transform: `translateX(${pill.left}px)`,
+                        width: pill.width,
+                        opacity: 1,
+                      }
+                    : { opacity: 0 }
+                }
+              />
+              {links.map(([label, href]) => {
+                const current = norm(active) === norm(href);
+                const lit = norm(target) === norm(href);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    data-href={norm(href)}
+                    className={lit ? "is-lit" : undefined}
+                    aria-current={current ? "page" : undefined}
+                    onMouseEnter={() => setHovered(href)}
+                    onFocus={() => setHovered(href)}
+                    onBlur={() => setHovered(null)}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
+            </nav>
+            <div className="hdr-actions">
+              <Link href="/contact/" className="hdr-cta">
+                <span>Enquire now</span>
+                <i>
+                  <ArrowUpRight size={16} strokeWidth={1.75} />
+                </i>
+              </Link>
+              <button
+                className="hdr-burger"
+                aria-label="Open navigation"
+                onClick={openMenu}
+              >
+                <span />
+                <span />
+              </button>
+            </div>
+          </div>
+          <span className="hdr-progress" aria-hidden="true" />
+        </div>
+      </header>
+
+      <dialog
+        aria-label="Navigation"
+        className="hdr-menu"
+        ref={dialog}
+        onClose={() => setMenuOpen(false)}
+      >
+        <div className="hdr-menu-top">
+          <Link className="hdr-brand" href="/" onClick={closeMenu}>
+            <img src="/images/crest.webp" alt="" width="273" height="288" />
+            <span>
+              <strong>Rathore Group</strong>
+              <small>Building a legacy since {company.founded}</small>
+            </span>
+          </Link>
+          <button
+            className="hdr-menu-close"
+            aria-label="Close navigation"
+            onClick={closeMenu}
+          >
+            <X size={22} />
+          </button>
+        </div>
+        <nav aria-label="Mobile navigation" className="hdr-menu-nav">
+          {[["Home", "/"], ...links, ["Contact", "/contact/"]].map(
+            ([label, href], i) => (
               <Link
                 key={href}
                 href={href}
-                aria-current={
-                  active.replace(/\/$/, "") === href.replace(/\/$/, "")
-                    ? "page"
-                    : undefined
-                }
+                onClick={closeMenu}
+                style={{ animationDelay: `${0.08 + i * 0.05}s` }}
+                aria-current={norm(active) === norm(href) ? "page" : undefined}
               >
+                <span>{String(i + 1).padStart(2, "0")}</span>
                 {label}
+                <ArrowUpRight size={22} />
               </Link>
-            ))}
-          </nav>
-          <Link href="/contact/" className="nav-cta">
-            Enquire now <ArrowUpRight size={15} />
-          </Link>
-          <button
-            className="menu-toggle"
-            aria-label="Open navigation"
-            onClick={() => dialog.current?.showModal()}
-          >
-            <Menu />
-          </button>
-        </div>
-      </header>
-      <dialog aria-label="Navigation" className="mobile-menu" ref={dialog}>
-        <div className="mobile-menu-top">
-          <Logo small />
-          <button
-            aria-label="Close navigation"
-            onClick={() => dialog.current?.close()}
-          >
-            <X />
-          </button>
-        </div>
-        <nav aria-label="Mobile navigation">
-          <Link href="/" onClick={() => dialog.current?.close()}>
-            Home
-          </Link>
-          {[...links, ["Contact", "/contact/"]].map(([label, href], i) => (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => dialog.current?.close()}
-            >
-              <span>0{i + 1}</span>
-              {label}
-              <ArrowUpRight size={22} />
-            </Link>
-          ))}
+            ),
+          )}
         </nav>
-        <p>
-          Engineering infrastructure.
-          <br />
-          Building a lasting legacy.
-        </p>
+        <div className="hdr-menu-foot">
+          <a href={`tel:${company.phone.replace(/[^0-9+]/g, "")}`}>
+            <Phone size={14} /> {company.phone}
+          </a>
+          <a href={`mailto:${company.email}`}>
+            <Mail size={14} /> {company.email}
+          </a>
+          <p>Engineering infrastructure. Building a lasting legacy.</p>
+        </div>
+        <img
+          className="hdr-menu-watermark"
+          src="/images/crest.webp"
+          alt=""
+          aria-hidden="true"
+        />
       </dialog>
     </>
   );

@@ -67,7 +67,8 @@ try {
   await recovery.waitForTimeout(600);
   assert.equal(await recovery.getByRole('button', { name: 'Retry', exact: true }).isVisible(), true, 'Revisiting a failed frame keeps recovery available');
   failing = false;
-  await recovery.getByRole('button', { name: 'Retry', exact: true }).click();
+  // dispatchEvent: click() would scroll the sticky hero back to the top before clicking.
+  await recovery.getByRole('button', { name: 'Retry', exact: true }).dispatchEvent('click');
   await frame(recovery, 87);
   assert.equal(await recovery.locator('.scroll-journey').getAttribute('data-load-state'), 'ready');
   assert.equal(await recovery.getByRole('button', { name: 'Retry', exact: true }).count(), 0);

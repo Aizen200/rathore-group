@@ -839,7 +839,7 @@ export function PresenceSection() {
                   d={`M27 51 Q${(27 + r.x) / 2 - 8} ${(51 + r.y) / 2 - 10} ${r.x} ${r.y}`}
                   pathLength="1"
                   fill="none"
-                  stroke={i === active ? "#c9a34a" : "#9a8759"}
+                  stroke={i === active ? "#b9a25c" : "#9a8759"}
                   strokeWidth={i === active ? 0.16 : 0.08}
                   opacity={i === active ? 0.65 : 0.2}
                 />
@@ -1009,47 +1009,57 @@ export function EquipmentSection() {
             <p>A capable in-house equipment bank. The right tools to turn engineering ambition into on-site progress.</p>
           </div>
         </div>
-        <div className="fleet-mobile-select">
-          <label htmlFor="fleet-select">EXPLORE OUR EQUIPMENT</label>
-          <select id="fleet-select" value={active} onChange={(event) => setActive(Number(event.target.value))}>
-            {equipment.map((item, i) => <option value={i} key={item.name}>{String(i + 1).padStart(2, "0")} / {item.name}</option>)}
-          </select>
-        </div>
-        <div className="fleet-stage">
-          <figure className="fleet-photo" key={current.image}>
-            <img src={current.image} alt={`${current.name}, equipment photograph from the 2026 corporate profile`} width="1200" height="1000" loading="lazy" />
-            <span className="fleet-photo-tag">R & B INFRA / EQUIPMENT BANK</span>
-          </figure>
-          <div className="fleet-detail">
-            <div className="fleet-detail-copy" key={current.name}>
-              <span className="fleet-eyebrow">IN FOCUS / {String(active + 1).padStart(2, "0")}</span>
-              <Construction size={32} strokeWidth={1.1} aria-hidden="true" />
-              <RevealText as="h3">{current.name}</RevealText>
-              <p>{current.description}</p>
+        <div className="eqb">
+          <nav className="eqb-list" aria-label="Select equipment">
+            <div className="eqb-list-head">
+              <span>THE TOOLS BEHIND THE WORK</span>
+              <span>{String(count).padStart(2, "0")} TYPES</span>
             </div>
-            <div className="fleet-navigation">
-              <div className="fleet-position" aria-live="polite" aria-atomic="true">
-                <strong>{String(active + 1).padStart(2, "0")}</strong>
-                <span>/ {String(count).padStart(2, "0")}</span>
-                <span className="sr-only"> — {current.name}</span>
-              </div>
-              <div className="fleet-arrows">
-                <button aria-label="Previous equipment" onClick={() => setActive((value) => (value - 1 + count) % count)}><ArrowLeft size={20} /></button>
-                <button aria-label="Next equipment" onClick={() => setActive((value) => (value + 1) % count)}><ArrowRight size={20} /></button>
-              </div>
-            </div>
-            <div className="fleet-progress" aria-hidden="true"><span style={{ width: `${((active + 1) / count) * 100}%` }} /></div>
+            <ol>
+              {equipment.map((item, i) => (
+                <li key={item.name}>
+                  <button aria-pressed={active === i} onClick={() => setActive(i)}>
+                    <span>{String(i + 1).padStart(2, "0")}</span>
+                    <strong>{item.name}</strong>
+                    <ArrowRight size={15} aria-hidden="true" />
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </nav>
+          <div className="eqb-mobile-select">
+            <label htmlFor="fleet-select">EXPLORE OUR EQUIPMENT</label>
+            <select id="fleet-select" value={active} onChange={(event) => setActive(Number(event.target.value))}>
+              {equipment.map((item, i) => <option value={i} key={item.name}>{String(i + 1).padStart(2, "0")} / {item.name}</option>)}
+            </select>
           </div>
-        </div>
-        <div className="fleet-index-heading"><span>THE TOOLS BEHIND THE WORK</span><span>{String(count).padStart(2, "0")} EQUIPMENT TYPES</span></div>
-        <div className="fleet-index" role="group" aria-label="Select equipment">
-          {equipment.map((item, i) => (
-            <button key={item.name} aria-label={`View ${item.name}`} aria-pressed={active === i} onClick={() => setActive(i)}>
-              <span>{String(i + 1).padStart(2, "0")}</span>
-              <strong>{item.name}</strong>
-              <ArrowUpRight size={16} aria-hidden="true" />
-            </button>
-          ))}
+          <figure className="eqb-stage">
+            {/* Photos vary wildly in ratio/size: a blurred cover fill sits behind the uncropped photo. */}
+            <div className="eqb-media" key={current.image}>
+              <img className="eqb-media-fill" src={current.image} alt="" aria-hidden="true" />
+              <img className="eqb-media-photo" src={current.image} alt={`${current.name}, equipment photograph from the 2026 corporate profile`} loading="lazy" />
+            </div>
+            <span className="eqb-tag">R & B INFRA / EQUIPMENT BANK</span>
+            <figcaption className="eqb-caption">
+              <div className="eqb-caption-copy" key={current.name}>
+                <span className="eqb-eyebrow">IN FOCUS / {String(active + 1).padStart(2, "0")}</span>
+                <h3>{current.name}</h3>
+                <p>{current.description}</p>
+              </div>
+              <div className="eqb-controls">
+                <div className="eqb-position" aria-live="polite" aria-atomic="true">
+                  <strong>{String(active + 1).padStart(2, "0")}</strong>
+                  <span>/ {String(count).padStart(2, "0")}</span>
+                  <span className="sr-only"> — {current.name}</span>
+                </div>
+                <div className="eqb-arrows">
+                  <button aria-label="Previous equipment" onClick={() => setActive((value) => (value - 1 + count) % count)}><ArrowLeft size={19} /></button>
+                  <button aria-label="Next equipment" onClick={() => setActive((value) => (value + 1) % count)}><ArrowRight size={19} /></button>
+                </div>
+              </div>
+              <div className="eqb-progress" aria-hidden="true"><span style={{ width: `${((active + 1) / count) * 100}%` }} /></div>
+            </figcaption>
+          </figure>
         </div>
       </div>
     </section>
@@ -1128,15 +1138,27 @@ export function GroupSection() {
 }
 export function TrustSection() {
   const [open, setOpen] = useState(false);
-  const clients = [
-    ["/images/client-mcgm.webp", "Municipal Corporation of Greater Mumbai"],
-    ["/images/client-thane.webp", "Thane Municipal Corporation"],
-    ["/images/client-vvm.webp", "Vasai Virar City Municipal Corporation"],
-    ["/images/client-jnn.webp", "Jodhpur Municipal Corporation"],
-    ["/images/clients/indian-railways.webp", "Indian Railways"],
-    ["/images/clients/mmrda.webp", "MMRDA"],
-    ["/images/clients/bro.webp", "Border Roads Organisation"],
-    ["/images/clients/nhai.webp", "National Highways Authority of India"],
+  const clientGroups: { label: string; note: string; items: [string, string][] }[] = [
+    {
+      label: "Municipal bodies",
+      note: "Urban water, roads & civic works",
+      items: [
+        ["/images/client-mcgm.webp", "Municipal Corporation of Greater Mumbai"],
+        ["/images/client-thane.webp", "Thane Municipal Corporation"],
+        ["/images/client-vvm.webp", "Vasai Virar City Municipal Corporation"],
+        ["/images/client-jnn.webp", "Jodhpur Municipal Corporation"],
+      ],
+    },
+    {
+      label: "National agencies",
+      note: "Rail, metro & highway infrastructure",
+      items: [
+        ["/images/clients/indian-railways.webp", "Indian Railways"],
+        ["/images/clients/mmrda.webp", "MMRDA"],
+        ["/images/clients/bro.webp", "Border Roads Organisation"],
+        ["/images/clients/nhai.webp", "National Highways Authority of India"],
+      ],
+    },
   ];
   return (
     <section className="trust-section section-pad">
@@ -1154,17 +1176,26 @@ export function TrustSection() {
             to deliver essential infrastructure.
           </p>
         </div>
-        <div className="client-logos">
-          {clients.map(([src, name]) => (
-            <div key={name}>
-              <img
-                src={src}
-                alt={name}
-                width="110"
-                height="110"
-                loading="lazy"
-              />
-              <span>{name}</span>
+        <div className="trust-roster">
+          {clientGroups.map((group, g) => (
+            <div className="trust-group" key={group.label}>
+              <div className="trust-group-head">
+                <span className="trust-group-label">{group.label}</span>
+                <span className="trust-group-note">{group.note}</span>
+              </div>
+              <ul className="trust-grid">
+                {group.items.map(([src, name], i) => (
+                  <li className="trust-card" key={name}>
+                    <span className="trust-index">
+                      {String(g * group.items.length + i + 1).padStart(2, "0")}
+                    </span>
+                    <div className="trust-logo">
+                      <img src={src} alt="" width="110" height="110" loading="lazy" />
+                    </div>
+                    <span className="trust-name">{name}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>

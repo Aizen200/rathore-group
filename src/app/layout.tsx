@@ -1,11 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Navbar, Footer } from "@/components/SiteChrome";
 import Motion from "@/components/Motion";
+import Preloader from "@/components/Preloader";
 import "./globals.css";
 import "./redesign.css";
 import "./experience.css";
 import "./capabilities.css";
 import "./equipment.css";
+import "./theme.css";
+import "./trust.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://rathore-group-legacy.keyursatra.chatgpt.site"),
   title: {
@@ -30,10 +33,10 @@ export const metadata: Metadata = {
     ],
   },
   robots: { index: true, follow: true },
-  icons: { icon: "/favicon.svg" },
+  icons: { icon: "/icon.png", apple: "/apple-touch-icon.png" },
 };
 export const viewport: Viewport = {
-  themeColor: "#0b192a",
+  themeColor: "#0c192b",
   width: "device-width",
   initialScale: 1,
 };
@@ -45,6 +48,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <Preloader />
         <Navbar />
         <main id="main">{children}</main>
         <Footer />

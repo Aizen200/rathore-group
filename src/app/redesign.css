@@ -1,14 +1,14 @@
 /* A continuous, scroll-scrubbed architectural film, followed by an editorial portfolio. */
 :root {
-  --navy: #091722;
-  --navy-light: #10232f;
+  --navy: #0c192b;
+  --navy-light: #162538;
   --white: #f2f1eb;
   --gray: #a3afb6;
   --ink: #13232d;
 }
 body {
   font-size: 15px;
-  background: #091722;
+  background: #0c192b;
   line-height: 1.8;
 }
 h1,
@@ -90,7 +90,7 @@ h2 {
 }
 .navbar-scrolled {
   height: 72px;
-  background: #091722f5;
+  background: #0c192bf5;
 }
 .nav-inner {
   padding: 0 4%;
@@ -115,7 +115,7 @@ h2 {
 }
 .nav-cta:hover {
   background: transparent;
-  color: #e6d09a;
+  color: #d8cc80;
 }
 
 /* The sticky viewport is a player whose only timeline is native scroll position. */
@@ -124,7 +124,7 @@ h2 {
   height: 640svh;
   min-height: 3800px;
   --journey-progress: 0;
-  background: #091722;
+  background: #0c192b;
   isolation: isolate;
 }
 .journey-sticky {
@@ -134,7 +134,7 @@ h2 {
   top: 0;
   overflow: hidden;
   isolation: isolate;
-  background: #091722;
+  background: #0c192b;
 }
 .journey-poster,
 .journey-canvas {
@@ -192,7 +192,7 @@ h2 {
   justify-content: space-between;
   align-items: center;
   font-size: 9px;
-  color: #d0d7d8;
+  color: #d8d6d0;
   letter-spacing: 1.8px;
 }
 .journey-topline > span:last-child {
@@ -205,7 +205,7 @@ h2 {
   display: block;
   width: 4px;
   height: 4px;
-  background: #c9a34a;
+  background: #b9a25c;
   border-radius: 50%;
 }
 .journey-copy {
@@ -227,7 +227,7 @@ h2 {
 .journey-eyebrow > i {
   width: 24px;
   height: 1px;
-  background: #c9a34a;
+  background: #b9a25c;
 }
 .journey-copy h1 {
   font-size: clamp(64px, 7.9vw, 132px);
@@ -266,7 +266,7 @@ h2 {
   transition: color 0.2s;
 }
 .journey-link:hover {
-  color: #e6d09a;
+  color: #d8cc80;
 }
 .journey-chapter-count {
   font-size: 10px;
@@ -331,7 +331,7 @@ h2 {
 .journey-chapters > button.active,
 .journey-chapters > button:hover {
   opacity: 1;
-  color: #e6d09a;
+  color: #d8cc80;
 }
 .journey-chapters > button > i {
   width: 15px;
@@ -377,7 +377,7 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #c9a34a70;
+  border: 1px solid #b9a25c70;
   width: 43px;
   height: 43px;
   border-radius: 50%;
@@ -407,7 +407,7 @@ h2 {
   width: 100%;
   transform: scaleX(var(--journey-progress));
   transform-origin: left;
-  background: #c9a34a;
+  background: #b9a25c;
 }
 
 /* Editorial scale replaces the old small, uniform section treatments. */
@@ -424,7 +424,7 @@ h2 {
   padding-bottom: 24px;
 }
 .stats-heading .eyebrow {
-  color: #806426;
+  color: #8a6e3a;
   font-size: 9px;
 }
 .stats-heading > span:last-child {
@@ -450,7 +450,7 @@ h2 {
 }
 .stat > div > span,
 .stat > div > small {
-  color: #806426;
+  color: #8a6e3a;
 }
 .stat > p {
   font-size: 10px;
@@ -707,7 +707,7 @@ h2 {
   font-size: 8px;
   letter-spacing: 1.3px;
   z-index: 3;
-  color: #d8dede;
+  color: #deddd8;
 }
 .presence-section {
   background: #0b1d29;
@@ -775,7 +775,7 @@ h2 {
   line-height: 1.9;
 }
 .equipment-section {
-  background: #eceee7;
+  background: #eeece7;
 }
 .equipment-copy {
   padding: 90px 12% 80px;
@@ -903,7 +903,7 @@ h2 {
 }
 .certificate-card {
   padding: 25px;
-  background: #e9eae3;
+  background: #eae8e3;
 }
 .certificate-card h4 {
   font-size: 15px;
@@ -915,7 +915,7 @@ h2 {
   color: #566269;
 }
 .responsibility-section {
-  background: #e9ebe3;
+  background: #ebe9e3;
 }
 .responsibility-layout h2 {
   font-size: clamp(40px, 4vw, 62px);

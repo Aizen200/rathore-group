@@ -281,7 +281,7 @@ function CapabilityModel({ kind }: { kind: number }) {
           [-12.5, 0, 11.5],
           [-12.5, 0, -11.5],
         ]}
-        color="#c9a34a"
+        color="#b9a25c"
         lineWidth={1}
       />
       {kind === 0 && (
@@ -314,7 +314,7 @@ function CapabilityModel({ kind }: { kind: number }) {
                 />
                 <mesh position={[x, 2.5, z]}>
                   <icosahedronGeometry args={[1.4, 0]} />
-                  <meshStandardMaterial color="#63785f" />
+                  <meshStandardMaterial color="#546883" />
                 </mesh>
               </group>
             )),
@@ -338,7 +338,7 @@ function CapabilityModel({ kind }: { kind: number }) {
                 <mesh position={[x, 2.05, z]} rotation={[-Math.PI / 2, 0, 0]}>
                   <circleGeometry args={[3.2, 32]} />
                   <meshStandardMaterial
-                    color="#487f8a"
+                    color="#3d6394"
                     metalness={0.7}
                     roughness={0.2}
                   />
@@ -355,14 +355,14 @@ function CapabilityModel({ kind }: { kind: number }) {
           <Box
             position={[9, 4.2, 0]}
             scale={[3.3, 0.4, 14.3]}
-            color="#617478"
+            color="#566a83"
           />
         </group>
       )}
       {kind === 3 && (
         <group>
           <Box position={[-2, 3, 0]} scale={[15, 6, 12]} color="#b6b4a7" />
-          <Box position={[-2, 6.2, 0]} scale={[16, 0.5, 13]} color="#6c846f" />
+          <Box position={[-2, 6.2, 0]} scale={[16, 0.5, 13]} color="#607590" />
           {[-6, 1].map((x) => (
             <group key={x}>
               <mesh position={[x, 2, 8]}>
@@ -371,7 +371,7 @@ function CapabilityModel({ kind }: { kind: number }) {
               </mesh>
               <mesh position={[x, 4.5, 8]}>
                 <coneGeometry args={[2.5, 1, 24]} />
-                <meshStandardMaterial color="#7c8750" />
+                <meshStandardMaterial color="#977d41" />
               </mesh>
             </group>
           ))}
@@ -453,7 +453,7 @@ export default function InfrastructureScene({
               key={i}
               position={[-40 + i * 2, -3.95, -30 - i * 2]}
               scale={[0.5 + (i % 3), 0.015, 25]}
-              color={i % 2 ? "#344b54" : "#4c5b5d"}
+              color={i % 2 ? "#344b54" : "#445265"}
             />
           ))}
         </group>
