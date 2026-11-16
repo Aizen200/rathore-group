@@ -1,14 +1,22 @@
 {
-  "kind": "real filmed stock footage",
-  "title": "Aerial View of City Skyline with Bridge and River",
-  "creator": "耀明 钟",
-  "provider": "Pexels",
-  "sourcePage": "https://www.pexels.com/video/aerial-view-of-city-skyline-with-bridge-and-river-31198061/",
-  "originalDownload": "https://videos.pexels.com/video-files/31198061/13326016_3848_2160_25fps.mp4",
-  "originalDimensions": [3848, 2160],
-  "license": "Pexels License",
-  "licenseUrl": "https://www.pexels.com/license/",
-  "verifiedOn": "2026-11-13",
+  "kind": "AI-generated construction build-up video",
+  "title": "Generated Video November 17, 2026 - 12_40AM",
+  "provider": "Supplied by the site owner (AI-generated)",
+  "originalFile": "Generated Video November 17, 2026 - 12_40AM.mp4",
+  "originalDimensions": [1920, 1080],
+  "durationSeconds": 10,
+  "audio": "Not used: the hero plays extracted still frames, so no audio is shipped.",
   "usage": "Illustrative cinematic homepage background; does not depict a Rathore Group project.",
-  "extraction": { "startSeconds": 0.25, "durationSeconds": 10, "desktopFrames": 180, "retinaFrames": 180, "mobileFrames": 120, "webpQuality": 86 }
+  "extraction": {
+    "method": "Decoded in Chrome (Playwright) and encoded with sharp; no intermediate lossy step",
+    "startSeconds": 0,
+    "durationSeconds": 9.97,
+    "desktopFrames": 180,
+    "mobileFrames": 120,
+    "mobileCrop": "centre 9:16 crop of the 1080p frame, scaled to 1080×1920",
+    "retinaFrames": 0,
+    "qhdFrames": 0,
+    "note": "Source is 1080p, so the 1440p/4K tiers are omitted rather than upscaled.",
+    "webpQuality": 74
+  }
 }

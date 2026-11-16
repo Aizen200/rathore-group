@@ -1,19 +1,19 @@
 {
   "basePath": "/film-hq",
   "kind": "real-footage",
-  "version": "6480890d407a",
+  "version": "9398ee7f1879",
   "desktop": {
     "count": 180,
     "width": 1920,
     "height": 1080
   },
   "retina": {
-    "count": 180,
+    "count": 0,
     "width": 3840,
     "height": 2160
   },
   "qhd": {
-    "count": 180,
+    "count": 0,
     "width": 2560,
     "height": 1440
   },

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 const FOUNDED = 1994;
 const HOLD_MS = 2600; // time the mark stays on screen before exiting
@@ -36,12 +36,11 @@ export default function Preloader() {
           <img className="preloader-crest" src="/images/crest.webp" alt="" width="273" height="288" />
           <div className="preloader-digits">
             {digits.map((d, i) => (
-              <span key={i} className={`preloader-digit d${i}`} style={{ animationDelay: `${0.45 + i * 0.18}s` }}>
+              <span key={i} className={`preloader-digit d${i}`} style={{ "--d": `${0.45 + i * 0.18}s` } as CSSProperties}>
                 {d}
               </span>
             ))}
           </div>
-          <span className="preloader-slash" />
         </div>
 
         <p className="preloader-tagline">

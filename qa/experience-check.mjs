@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
 import { chromium } from '@playwright/test';
+import { readFile } from 'node:fs/promises';
+const manifest = JSON.parse(await readFile(new URL('../src/data/sequence-manifest.json', import.meta.url), 'utf8'));
+// With 4K frames the resting canvas is at least screen resolution; with a 1080p-only source it is
+// the 1080p frame's native cover crop (1663 × 1080 at 1512 × 982 CSS px).
+const has4k = manifest.retina.count > 0;
+const minRetina = has4k ? [3024, 1964] : [1663, 1080];
 const base = process.env.RATHORE_BASE_URL || 'http://127.0.0.1:3001';
 await mkdir('/tmp/rathore-refresh', { recursive: true });
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
@@ -53,20 +59,20 @@ try {
   const retina = await browser.newPage({ viewport: { width: 1512, height: 982 }, deviceScaleFactor: 2 });
   await retina.goto(base, { waitUntil: 'networkidle' });
   await retina.waitForFunction(() => document.querySelector('.journey-canvas')?.dataset.frame === '0');
-  // At rest the 4K frame is drawn 1:1 (its native crop), so the canvas is at least screen resolution.
-  await retina.waitForFunction(() => document.querySelector('.journey-canvas')?.width >= 3024);
+  // At rest the sharpest available frame is drawn 1:1 (its native crop).
+  await retina.waitForFunction(w => document.querySelector('.journey-canvas')?.width >= w, minRetina[0]);
   const detail = await retina.evaluate(() => {
     const section = document.querySelector('.scroll-journey');
     const canvas = document.querySelector('.journey-canvas');
     return { variant: section.dataset.sequenceVariant, width: canvas.width, height: canvas.height, poster: document.querySelector('.journey-poster img').currentSrc };
   });
   assert.equal(detail.variant, 'retina');
-  assert.ok(detail.width >= 3024 && detail.height >= 1964, `Retina canvas ${detail.width} × ${detail.height} is below screen resolution`);
-  assert.match(detail.poster, /retina\/000.webp/);
+  assert.ok(detail.width >= minRetina[0] && detail.height >= minRetina[1], `Retina canvas ${detail.width} × ${detail.height} is below the source's native resolution`);
+  assert.match(detail.poster, has4k ? /retina\/000.webp/ : /desktop\/000.webp/);
   await retina.evaluate(() => { const el = document.querySelector('.scroll-journey'); scrollTo({ top: (el.offsetHeight - innerHeight) * .485, behavior: 'instant' }); });
   await retina.waitForFunction(() => document.querySelector('.journey-canvas')?.dataset.frame === '87');
   await retina.screenshot({ path: '/tmp/rathore-refresh/retina-hero.png' });
-  console.log('PASS Retina 4K frame selection, ≥ 3024 × 1964 canvas at rest, exact frame scrubbing');
+  console.log(`PASS Retina frame selection (${has4k ? '4K' : '1080p source'}), ≥ ${minRetina.join(' × ')} canvas at rest, exact frame scrubbing`);
   await retina.close();
   const reduced = await browser.newPage({ reducedMotion: 'reduce', viewport: { width: 390, height: 844 } });
   await reduced.goto(base);

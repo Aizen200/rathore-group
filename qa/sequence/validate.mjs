@@ -10,6 +10,13 @@ for (const [variant, count, width, height] of [
   ["mobile", 120, 1080, 1920],
 ]) {
   const folder = path.resolve("public/film-hq", variant);
+  // Higher-resolution tiers are optional: a 1080p source ships desktop + mobile only, and the
+  // player then skips the 1440p/4K tiers (count 0) instead of loading upscaled frames.
+  if ((variant === "retina" || variant === "qhd") && !(await readdir(path.resolve("public/film-hq")).catch(() => [])).includes(variant)) {
+    manifest[variant].count = 0;
+    console.log(`${variant}: not present (optional tier)`);
+    continue;
+  }
   const files = (await readdir(folder)).filter((n) => n.endsWith(".webp"));
   if (files.length !== count)
     throw Error(
@@ -44,7 +51,7 @@ for (const [variant, preview] of Object.entries(manifest.preview)) {
   const height = Math.ceil(preview.count / preview.columns) * preview.height;
   if (file.subarray(8, 12).toString() !== 'WEBP' || file.subarray(12, 16).toString() !== 'VP8 '
     || (file.readUInt16LE(26) & 0x3fff) !== width || (file.readUInt16LE(28) & 0x3fff) !== height)
-    throw Error(`Invalid ${variant} preview sheet; regenerate with python3 qa/sequence/previews.py`);
+    throw Error(`Invalid ${variant} preview sheet; regenerate with node qa/sequence/previews.mjs`);
   fingerprint.update(file);
   console.log(`${variant}: scrub preview ${(file.length / 1024).toFixed(0)} KiB`);
 }

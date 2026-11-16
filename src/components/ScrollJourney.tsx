@@ -2,8 +2,17 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { ArrowDown, ArrowUpRight, ArrowRight } from "lucide-react";
 import sequence from "@/data/sequence-manifest.json";
+
+/**
+ * Which hero to show: "construction" = the scroll-driven 3D build (ConstructionScene);
+ * "film" = the scroll-scrubbed footage frame player below (currently the construction build-up
+ * video). Flip this to switch between them.
+ */
+const HERO_MODE = "film" as "construction" | "film";
+const ConstructionScene = dynamic(() => import("./ConstructionScene"), { ssr: false, loading: () => null });
 
 const chapters = [
   {
@@ -66,8 +75,54 @@ export default function ScrollJourney() {
   const activeChapter = useRef(0);
   const retry = useRef<() => void>(() => {});
   const [loadState, setLoadState] = useState<LoadState>("ready");
+  const buildProgress = useRef(0);
+  const [sceneActive, setSceneActive] = useState(true);
+
+  // 3D construction hero: scroll position drives the build; the scene eases it internally.
+  useEffect(() => {
+    if (HERO_MODE !== "construction") return;
+    const root = section.current;
+    if (!root) return;
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let frame = 0;
+    let visible = true;
+    const update = () => {
+      frame = 0;
+      const rect = root.getBoundingClientRect();
+      const progress = Math.max(0, Math.min(1, -rect.top / Math.max(1, root.offsetHeight - innerHeight)));
+      root.style.setProperty("--journey-progress", String(progress));
+      // Reduced motion: show the finished tower as a still and let the chapter buttons change text.
+      buildProgress.current = reduced ? 1 : progress;
+      const nowVisible = rect.bottom > 0 && rect.top < innerHeight;
+      if (nowVisible !== visible) setSceneActive((visible = nowVisible));
+      if (!reduced) {
+        const next = progress < 0.21 ? 0 : progress < 0.445 ? 1 : progress < 0.685 ? 2 : progress < 0.925 ? 3 : 4;
+        if (next !== activeChapter.current) setChapter((activeChapter.current = next));
+      }
+    };
+    const scroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    jump.current = progress => {
+      if (reduced) {
+        setChapter((activeChapter.current = Math.max(0, stops.indexOf(progress))));
+        return;
+      }
+      const top = root.getBoundingClientRect().top + scrollY;
+      scrollTo({ top: top + (root.offsetHeight - innerHeight) * progress, behavior: "smooth" });
+    };
+    update();
+    addEventListener("scroll", scroll, { passive: true });
+    addEventListener("resize", scroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      removeEventListener("scroll", scroll);
+      removeEventListener("resize", scroll);
+    };
+  }, []);
 
   useEffect(() => {
+    if (HERO_MODE !== "film") return;
     const root = section.current;
     const element = canvas.current;
     if (!root || !element) return;
@@ -701,24 +756,32 @@ export default function ScrollJourney() {
       aria-label="Rathore Group infrastructure journey"
     >
       <div className="journey-sticky">
+        {HERO_MODE === "construction" ? (
+          <ConstructionScene progress={buildProgress} active={sceneActive} />
+        ) : (
+        <>
         <picture className="journey-poster">
           <source
             media="(max-width: 700px)"
             srcSet={`${sequence.basePath}/mobile/000.webp?v=${sequence.version}`}
           />
-          <source
-            media="(min-resolution: 1.5dppx), (min-width: 1921px)"
-            srcSet={`${sequence.basePath}/retina/000.webp?v=${sequence.version}`}
-          />
+          {sequence.retina.count > 0 && (
+            <source
+              media="(min-resolution: 1.5dppx), (min-width: 1921px)"
+              srcSet={`${sequence.basePath}/retina/000.webp?v=${sequence.version}`}
+            />
+          )}
           <img
             src={`${sequence.basePath}/desktop/000.webp?v=${sequence.version}`}
-            alt="Real aerial footage of a river bridge and city skyline; illustrative infrastructure footage"
+            alt="A building rising from foundations to a finished glass tower; illustrative construction footage"
             width="1920"
             height="1080"
             fetchPriority="high"
           />
         </picture>
         <canvas ref={canvas} className="journey-canvas" aria-hidden="true" />
+        </>
+        )}
         <div className="journey-shade" />
         {loadState !== "ready" && (
           <div className="journey-load-status" role="status" aria-live="polite">
