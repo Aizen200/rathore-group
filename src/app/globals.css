@@ -16,12 +16,12 @@
 :root {
   --navy: #0c192b;
   --navy-light: #162538;
-  --gold: #b9a25c;
-  --champagne: #d8cc80;
+  --gold: #c5a55a;
+  --champagne: #c5a55a;
   --white: #f5f5f0;
   --ink: #171a1d;
   --gray: #9ba6b0;
-  --line: rgba(193, 171, 124, 0.22);
+  --line: rgba(197, 165, 90, 0.22);
   --font-heading: Manrope, Arial, sans-serif;
   --font-body: Inter, Arial, sans-serif;
 }
@@ -162,7 +162,7 @@ dialog::backdrop {
   font-family: var(--font-heading);
   font-weight: 400;
   font-style: normal;
-  color: #a68a4d;
+  color: #c5a55a;
 }
 .muted {
   color: #82909c;
@@ -205,13 +205,13 @@ dialog::backdrop {
   display: inline-flex;
   align-items: center;
   gap: 33px;
-  border-bottom: 1px solid #af9257;
+  border-bottom: 1px solid #c5a55a;
   padding-bottom: 10px;
   font-size: 11px;
   font-weight: 500;
 }
 .underlined-link svg {
-  color: #aa8d4d;
+  color: #c5a55a;
   transition: transform 0.25s;
 }
 .underlined-link:hover svg {
@@ -239,7 +239,7 @@ dialog::backdrop {
   height: 5px;
   background: var(--gold);
   border-radius: 50%;
-  box-shadow: 0 0 0 4px #b9a25c13;
+  box-shadow: 0 0 0 4px #c5a55a13;
   flex-shrink: 0;
 }
 .skip-link {
@@ -273,7 +273,7 @@ dialog::backdrop {
   height: 76px;
   background: #0c192bf5;
   backdrop-filter: blur(14px);
-  border-bottom-color: #b9a25c26;
+  border-bottom-color: #c5a55a26;
 }
 .nav-inner {
   height: 100%;
@@ -306,7 +306,7 @@ dialog::backdrop {
   font-size: 18px;
   letter-spacing: 1.4px;
   line-height: 1.2;
-  color: #d8c087;
+  color: #c5a55a;
 }
 .brand-text small {
   display: block;
@@ -347,7 +347,7 @@ dialog::backdrop {
   align-items: center;
   justify-content: center;
   gap: 20px;
-  border: 1px solid #bca16a80;
+  border: 1px solid #c5a55a80;
   min-height: 37px;
   padding: 0 15px;
   font-size: 9px;
@@ -417,7 +417,7 @@ dialog::backdrop {
   inset: 0;
   background: radial-gradient(
     ellipse at 78% 37%,
-    #bda98c 0,
+    #c5a55a 0,
     #52616a 30%,
     #172b3e 58%,
     #0c192b 85%
@@ -493,7 +493,7 @@ dialog::backdrop {
   align-items: center;
   font-size: 9px;
   letter-spacing: 2.5px;
-  color: #d1bd8e;
+  color: #c5a55a;
   margin-bottom: 26px;
 }
 .hero h1 {
@@ -506,7 +506,7 @@ dialog::backdrop {
   font-family: var(--font-heading);
   font-style: normal;
   font-weight: 400;
-  color: #d6bd86;
+  color: #c5a55a;
   letter-spacing: -5px;
 }
 .hero-content > p {
@@ -561,7 +561,7 @@ dialog::backdrop {
   color: #bac0c6;
 }
 .scroll-icon {
-  border: 1px solid #bd9e6455;
+  border: 1px solid #c5a55a55;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -813,7 +813,7 @@ dialog::backdrop {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid #b9a25c55;
+  border: 1px solid #c5a55a55;
   box-shadow: 0 10px 30px #00000015;
 }
 .legacy-tag > span {
@@ -859,7 +859,7 @@ dialog::backdrop {
 .vision-mission > div > span {
   font-size: 8px;
   letter-spacing: 1.4px;
-  color: #987e45;
+  color: #c5a55a;
 }
 .vision-mission h3 {
   font-size: 22px;
@@ -1030,7 +1030,7 @@ dialog::backdrop {
 .technical-cross:after {
   content: "";
   position: absolute;
-  background: #b6975f60;
+  background: #c5a55a60;
 }
 .technical-cross:before {
   height: 1px;
@@ -1054,7 +1054,7 @@ dialog::backdrop {
   position: absolute;
   width: 80%;
   height: 50%;
-  border: 1px solid #b9a25c10;
+  border: 1px solid #c5a55a10;
   border-radius: 50%;
   transform: rotate(-20deg);
   top: 25%;
@@ -1132,7 +1132,7 @@ dialog::backdrop {
 }
 .status-tabs > button[aria-selected="true"] {
   color: #1b292e;
-  border-bottom-color: #ae8c47;
+  border-bottom-color: #c5a55a;
 }
 .status-tabs > button > span {
   display: inline-flex;
@@ -1140,7 +1140,7 @@ dialog::backdrop {
   font-size: 8px;
   vertical-align: top;
   padding-top: 1px;
-  color: #9c8047;
+  color: #c5a55a;
 }
 .project-arrows {
   display: flex;
@@ -1152,7 +1152,7 @@ dialog::backdrop {
   transition: color 0.2s;
 }
 .project-arrows > button:hover {
-  color: #9c8047;
+  color: #c5a55a;
 }
 .project-controls select {
   border: 0;
@@ -1215,7 +1215,7 @@ dialog::backdrop {
   filter: saturate(0.95);
 }
 .project-card:hover .project-image:after {
-  border-color: #b9a25c;
+  border-color: #c5a55a;
 }
 .project-status {
   display: flex;
@@ -1235,7 +1235,7 @@ dialog::backdrop {
   height: 3px;
   width: 3px;
   border-radius: 50%;
-  background: #977d41;
+  background: #c5a55a;
 }
 .project-open {
   position: absolute;
@@ -1272,7 +1272,7 @@ dialog::backdrop {
   font-size: 7px;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: #9b7e47;
+  color: #c5a55a;
   margin-top: 21px;
 }
 .project-meta > span:last-child {
@@ -1319,7 +1319,7 @@ dialog::backdrop {
   display: flex;
   align-items: center;
   gap: 15px;
-  color: #a28850;
+  color: #c5a55a;
 }
 .project-grid {
   display: grid;
@@ -1341,7 +1341,7 @@ dialog::backdrop {
 }
 .project-dialog {
   padding: 0;
-  border: 1px solid #9c824d60;
+  border: 1px solid #c5a55a60;
   width: min(950px, 92vw);
   background: var(--white);
   color: var(--ink);
@@ -1420,7 +1420,7 @@ dialog::backdrop {
 }
 .project-value strong small {
   font-size: 20px;
-  color: #a0874d;
+  color: #c5a55a;
 }
 .project-value > span {
   font-size: 7px;
@@ -1537,7 +1537,7 @@ dialog::backdrop {
   height: 80%;
   left: -5%;
   top: 10%;
-  border: 1px solid #b9a25c09;
+  border: 1px solid #c5a55a09;
   border-radius: 50%;
   transform: rotateX(25deg);
 }
@@ -1546,7 +1546,7 @@ dialog::backdrop {
   content: "";
   position: absolute;
   inset: 20px;
-  border: 1px solid #b9a25c08;
+  border: 1px solid #c5a55a08;
   border-radius: 50%;
 }
 .map-rings:after {
@@ -1566,7 +1566,7 @@ dialog::backdrop {
   height: 4px;
   border-radius: 50%;
   background: var(--gold);
-  box-shadow: 0 0 0 4px #b9a25c1a;
+  box-shadow: 0 0 0 4px #c5a55a1a;
   transition:
     box-shadow 0.4s,
     transform 0.4s;
@@ -1574,8 +1574,8 @@ dialog::backdrop {
 .map-marker.active > span {
   background: var(--champagne);
   box-shadow:
-    0 0 0 7px #b9a25c2b,
-    0 0 25px #b9a25c6b;
+    0 0 0 7px #c5a55a2b,
+    0 0 25px #c5a55a6b;
   transform: scale(1.5);
 }
 .map-marker > i {
@@ -1646,7 +1646,7 @@ dialog::backdrop {
 }
 .strengths-grid article {
   position: relative;
-  border-top: 1px solid #bca16a60;
+  border-top: 1px solid #c5a55a60;
   padding: 28px 20px 20px 0;
 }
 .strength-number {
@@ -1657,7 +1657,7 @@ dialog::backdrop {
   color: #6c8292;
 }
 .strengths-grid article > svg {
-  color: #c5a35c;
+  color: #c5a55a;
   margin-bottom: 27px;
 }
 .strengths-grid h3 {
@@ -1676,7 +1676,7 @@ dialog::backdrop {
   width: 28px;
   height: 1px;
   display: block;
-  background: #b9a25c50;
+  background: #c5a55a50;
   margin-top: 25px;
 }
 .equipment-section {
@@ -1749,7 +1749,7 @@ dialog::backdrop {
 }
 .equipment-current > span {
   font-size: 8px;
-  color: #a48a4a;
+  color: #c5a55a;
   letter-spacing: 1px;
 }
 .equipment-current > h3 {
@@ -1794,7 +1794,7 @@ dialog::backdrop {
   top: 9px;
 }
 .equipment-controls > div > button.active:before {
-  background: #ac8b46;
+  background: #c5a55a;
   width: 6px;
   height: 6px;
   left: 3.5px;
@@ -1877,7 +1877,7 @@ dialog::backdrop {
   border-bottom: 1px solid #17304425;
 }
 .leader-index {
-  color: #a68b50;
+  color: #c5a55a;
   font-size: 8px;
   padding-top: 6px;
 }
@@ -1890,7 +1890,7 @@ dialog::backdrop {
   display: block;
   margin-top: 8px;
   font-size: 9px;
-  color: #8d7a52;
+  color: #c5a55a;
   letter-spacing: 0.1px;
 }
 .leadership-people > article > svg {
@@ -1956,9 +1956,9 @@ dialog::backdrop {
   top: -3px;
   width: 5px;
   height: 5px;
-  background: #b39965;
+  background: #c5a55a;
   border-radius: 50%;
-  box-shadow: 0 0 0 4px #b3996510;
+  box-shadow: 0 0 0 4px #c5a55a10;
 }
 .trust-section {
   background: var(--white);
@@ -2015,7 +2015,7 @@ dialog::backdrop {
   padding: 15px 0;
 }
 .registration-block > button > span:last-child {
-  color: #a98e4f;
+  color: #c5a55a;
 }
 .registration-grid {
   display: grid;
@@ -2032,7 +2032,7 @@ dialog::backdrop {
   color: #647078;
 }
 .registration-grid svg {
-  color: #a1884d;
+  color: #c5a55a;
 }
 .registration-note {
   font-size: 10px;
@@ -2118,7 +2118,7 @@ dialog::backdrop {
   margin-top: 24px;
 }
 .final-cta .serif-accent {
-  color: #ddc18c;
+  color: #c5a55a;
 }
 .final-cta .container > div {
   display: flex;
@@ -2143,7 +2143,7 @@ dialog::backdrop {
 .footer {
   padding: 45px 6% 0;
   background: #081522;
-  border-top: 1px solid #b9a25c25;
+  border-top: 1px solid #c5a55a25;
 }
 .footer-top {
   display: flex;
@@ -2172,8 +2172,8 @@ dialog::backdrop {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #b9a25c55;
-  color: #c5ac76;
+  border: 1px solid #c5a55a55;
+  color: #c5a55a;
 }
 .footer-grid {
   display: grid;
@@ -2206,7 +2206,7 @@ dialog::backdrop {
   font-size: 9px;
   letter-spacing: 0.7px;
   margin-bottom: 18px;
-  color: #c4b388;
+  color: #c5a55a;
   font-weight: 400;
 }
 .footer-grid > div > a {
@@ -2295,7 +2295,7 @@ dialog::backdrop {
     135deg,
     transparent,
     transparent 140px,
-    #b9a25c0b 141px,
+    #c5a55a0b 141px,
     transparent 142px
   );
 }
@@ -2329,7 +2329,7 @@ dialog::backdrop {
   margin-top: 28px;
 }
 .contact-details > div > svg {
-  color: #ad8c48;
+  color: #c5a55a;
   margin-top: 5px;
   flex-shrink: 0;
 }
@@ -2355,7 +2355,7 @@ dialog::backdrop {
 }
 .contact-details .map-link {
   font-size: 10px;
-  color: #a18a4e;
+  color: #c5a55a;
   margin-top: 8px;
 }
 .contact-form {
@@ -2373,7 +2373,7 @@ dialog::backdrop {
   margin-bottom: 20px;
 }
 .contact-form label > span {
-  color: #a78847;
+  color: #c5a55a;
 }
 .contact-form input,
 .contact-form select,
@@ -2413,7 +2413,7 @@ dialog::backdrop {
   display: flex;
   gap: 12px;
   padding: 20px 0 0;
-  border-top: 1px solid #977d4155;
+  border-top: 1px solid #c5a55a55;
   margin-top: 20px;
   color: #846e39;
 }
@@ -2430,7 +2430,7 @@ dialog::backdrop {
   display: inline-flex;
   gap: 10px;
   align-items: center;
-  border-bottom: 1px solid #977d41;
+  border-bottom: 1px solid #c5a55a;
   margin-top: 13px;
 }
 .privacy-content h2 {
@@ -2487,7 +2487,7 @@ dialog::backdrop {
 .project-detail dt {
   font-size: 8px;
   letter-spacing: 1.5px;
-  color: #9a824c;
+  color: #c5a55a;
   margin-bottom: 10px;
 }
 .project-detail dd {
@@ -2504,7 +2504,7 @@ dialog::backdrop {
 }
 .detail-value small {
   font-size: 18px;
-  color: #a2874a;
+  color: #c5a55a;
 }
 .project-detail figure {
   margin: 65px 0 0;
@@ -4010,10 +4010,10 @@ dialog::backdrop {
   --gold: #8a6e3a;
 }
 .button-gold {
-  background: #b9a25c;
+  background: #c5a55a;
 }
 .button-gold:hover {
-  background: #d8cc80;
+  background: #c5a55a;
 }
 .about-section .serif-accent,
 .projects-section .serif-accent,
@@ -4055,7 +4055,7 @@ dialog::backdrop {
   letter-spacing: 0.7px;
   line-height: 1.2;
   margin: 0 0 18px;
-  color: #c4b388;
+  color: #c5a55a;
   font-weight: 400;
 }
 .equipment-controls > div {
@@ -4131,7 +4131,7 @@ dialog::backdrop {
   height: 390px;
   overflow: hidden;
   background: #e5e3dd;
-  border-bottom: 2px solid #a78c4b;
+  border-bottom: 2px solid #c5a55a;
 }
 .leader-portrait img {
   width: 100%;
@@ -4150,7 +4150,7 @@ dialog::backdrop {
   bottom: 15px;
   padding: 5px 8px;
   background: #0c192bd9;
-  color: #d8cc80;
+  color: #c5a55a;
   font-size: 7px;
   letter-spacing: 1.2px;
 }
@@ -4179,7 +4179,7 @@ dialog::backdrop {
 }
 .equipment-gallery-photo:after {
   background: linear-gradient(0deg, #0c192b22, transparent 40%);
-  border: 1px solid #a8905e45;
+  border: 1px solid #c5a55a45;
   inset: 30px;
   pointer-events: none;
 }
@@ -4239,7 +4239,7 @@ dialog::backdrop {
   transition: border-color 0.25s;
 }
 .certificate-card:hover {
-  border-color: #a48a4a;
+  border-color: #c5a55a;
 }
 .certificate-card > div {
   height: 160px;
@@ -4277,7 +4277,7 @@ dialog::backdrop {
   width: min(760px, 94vw);
   margin: auto; /* global `* { margin: 0 }` strips the native dialog centering */
   padding: 0;
-  border: 1px solid #b59b65;
+  border: 1px solid #c5a55a;
   background: #e9e7e3;
   color: #172b3c;
 }
@@ -4555,7 +4555,7 @@ html.is-preloading body {
 .preloader-crest {
   width: clamp(88px, 17vw, 210px);
   height: auto;
-  filter: drop-shadow(0 6px 24px rgba(185, 162, 92, 0.35));
+  filter: drop-shadow(0 6px 24px rgba(197, 165, 90, 0.35));
   opacity: 0;
   transform: scale(0.82) translateY(12px);
   animation: preloaderCrest 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s forwards;
@@ -4570,17 +4570,20 @@ html.is-preloading body {
 }
 .preloader-digit {
   display: inline-block;
-  background: linear-gradient(160deg, #f0e3a3 0%, var(--champagne) 25%, var(--gold) 55%, #8a7438 100%);
+  background: linear-gradient(160deg, #c5a55a 0%, var(--champagne) 25%, var(--gold) 55%, #8a7438 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  /* pad the paint box so glyph overhang (tight tracking) isn't clipped; margin cancels the extra width */
+  padding: 0 0.08em;
+  margin: 0 -0.08em;
   clip-path: inset(100% 0 0 0);
   transform: translateY(18%);
   animation: preloaderDigit 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 .preloader-digit.d1 {
   /* second digit in a cooler, steel-blue tinted gold like the two-tone reference */
-  background: linear-gradient(160deg, #d8cc80 0%, #b9a25c 35%, #5b7aa0 100%);
+  background: linear-gradient(160deg, #c5a55a 0%, #c5a55a 35%, #5b7aa0 100%);
   -webkit-background-clip: text;
   background-clip: text;
 }
@@ -4594,7 +4597,7 @@ html.is-preloading body {
   transform-origin: left center;
   transform: rotate(-38deg) scaleX(0);
   animation: preloaderSlash 0.8s cubic-bezier(0.65, 0, 0.35, 1) 1.05s forwards;
-  box-shadow: 0 0 12px rgba(216, 204, 128, 0.5);
+  box-shadow: 0 0 12px rgba(197, 165, 90, 0.5);
 }
 .preloader-tagline {
   justify-self: end;

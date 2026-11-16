@@ -68,7 +68,12 @@ export function Navbar() {
   // Condense after a little scroll; tuck away while scrolling down, return on scroll up.
   useEffect(() => {
     let last = window.scrollY;
+    let frame = 0;
     const handle = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    const update = () => {
+      frame = 0;
       const y = window.scrollY;
       setScrolled(y > 30);
       const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -81,9 +86,12 @@ export function Navbar() {
         last = y;
       }
     };
-    handle();
+    update();
     window.addEventListener("scroll", handle, { passive: true });
-    return () => window.removeEventListener("scroll", handle);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", handle);
+    };
   }, []);
 
   // Sliding gold rule follows the hovered link, falling back to the active one.

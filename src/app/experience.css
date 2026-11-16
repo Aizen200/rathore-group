@@ -1,5 +1,5 @@
 /* The corporate story: generous space, photographic compositions, and readable motion. */
-:root { --paper: #f1f0e9; --forest: #17273d; --champagne: #e4d5ae; --ease-out: cubic-bezier(.22,1,.36,1); }
+:root { --paper: #f1f0e9; --forest: #17273d; --champagne: #c5a55a; --ease-out: cubic-bezier(.22,1,.36,1); }
 .navbar, .navbar-scrolled { border: 0; box-shadow: none; }
 .nav-inner nav a::after { display: none; }
 .nav-cta { border: 0; }
@@ -52,7 +52,7 @@ h2 { font-size: clamp(48px, 6vw, 90px); font-weight: 500; letter-spacing: -.065e
 .about-copy > p:not(.lead-text) { font-size: 14px; color: #56615d; max-width: 430px; }
 .about-copy > .underlined-link { margin-top: 25px; }
 .image-caption { bottom: 0; font-size: 9px; color: #5c675e; letter-spacing: .09em; }
-.legacy-tag { display: flex; position: absolute; right: -30px; left: auto; bottom: 82px; width: 170px; height: 165px; background: #0e1a2a; color: #e7d5ac; padding: 25px; flex-direction: column; justify-content: center; }
+.legacy-tag { display: flex; position: absolute; right: -30px; left: auto; bottom: 82px; width: 170px; height: 165px; background: #0e1a2a; color: #c5a55a; padding: 25px; flex-direction: column; justify-content: center; }
 .legacy-tag > span { font-size: 67px; line-height: 1; letter-spacing: -.07em; }
 .legacy-tag > span > span { font-size: 28px; vertical-align: top; margin-left: 4px; }
 .legacy-tag p { font-size: 8px; line-height: 1.7; color: #dad6cb; margin-top: 14px; letter-spacing: .14em; }
@@ -64,35 +64,35 @@ h2 { font-size: clamp(48px, 6vw, 90px); font-weight: 500; letter-spacing: -.065e
 .vision-mission p { max-width: 430px; font-size: 14px; color: #58665d; }
 
 /* Selected work: offset photographs, with the metadata outside the image. */
-.projects-section { background: #101b24; color: var(--paper); --gold: #d1bd8c; }
+.projects-section { background: #101b24; color: var(--paper); --gold: #c5a55a; }
 .projects-section .section-heading-row { align-items: end; }
 .projects-section h2 { font-size: clamp(64px, 8vw, 120px); font-weight: 500; }
 .projects-section .section-heading-row p { color: #a7b4b9; font-size: 14px; }
-.projects-section .underlined-link { color: #eadbb8; margin-top: 25px; }
+.projects-section .underlined-link { color: #c5a55a; margin-top: 25px; }
 .project-controls { margin: 55px 0 35px; }
 .status-tabs { gap: 35px; }
 .status-tabs > button { color: #adbac1; border: 0; }
-.status-tabs > button[aria-selected='true'] { color: #e5d2a5; border: 0; }
-.status-tabs > button > span { color: #d8cba9; }
-.project-arrows > button { border: 0; background: #ffffff0c; color: #e6d7b8; }
+.status-tabs > button[aria-selected='true'] { color: #c5a55a; border: 0; }
+.status-tabs > button > span { color: #c5a55a; }
+.project-arrows > button { border: 0; background: #ffffff0c; color: #c5a55a; }
 .project-track { gap: 6vw; padding-inline: 6%; align-items: start; }
 .project-track .project-card { flex-basis: 43%; }
 .project-track .project-card:nth-child(even) { margin-top: 90px; }
-.project-track { cursor: grab; overflow-y: hidden; scroll-snap-type: none; scroll-behavior: auto; scrollbar-width: thin; scrollbar-color: #b8aa7a55 transparent; padding-bottom: 18px; }
+.project-track { cursor: grab; overflow-y: hidden; scroll-snap-type: none; scroll-behavior: auto; scrollbar-width: thin; scrollbar-color: #c5a55a55 transparent; padding-bottom: 18px; }
 .project-track::-webkit-scrollbar { display: block; height: 4px; }
-.project-track::-webkit-scrollbar-thumb { background: #b8aa7a55; border-radius: 2px; }
+.project-track::-webkit-scrollbar-thumb { background: #c5a55a55; border-radius: 2px; }
 .project-track .project-card { cursor: inherit; }
 .project-track.is-dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
 .project-image { height: auto; aspect-ratio: 1.24; }
 .project-image > img { filter: none; }
-.project-open { transform: none; opacity: 1; background: #efe9d8; color: #142234; width: 46px; height: 46px; }
+.project-open { transform: none; opacity: 1; background: #c5a55a; color: #142234; width: 46px; height: 46px; }
 .project-status { background: #11232ee8; color: #f0eee9; }
 .project-image-note { background: #11232ee8; color: #e5e3df; max-width: 72%; }
-.project-meta { color: #cab887; letter-spacing: .16em; font-size: 9px; margin-top: 28px; }
+.project-meta { color: #c5a55a; letter-spacing: .16em; font-size: 9px; margin-top: 28px; }
 .project-meta > span:last-child, .project-card-bottom > span { color: #a9b8bf; }
 .project-card > h3 { color: #f0eee4; font-size: clamp(24px, 2.6vw, 38px); margin: 14px 0 0; font-weight: 500; letter-spacing: -.045em; }
 .project-card-bottom { padding: 0; margin-top: 18px; }
-.project-card-bottom > strong { color: #dcc895; font-weight: 400; }
+.project-card-bottom > strong { color: #c5a55a; font-weight: 400; }
 .project-track-footer, .project-track-footer > span:last-child { color: #a5b2b9; margin-top: 35px; }
 .project-grid { gap: 65px 35px; }
 .project-grid .project-card { margin: 0; }
@@ -126,14 +126,14 @@ h2 { font-size: clamp(48px, 6vw, 90px); font-weight: 500; letter-spacing: -.065e
 /* Geographic reach: quiet, spacious, with the map drawn as the section enters. */
 .presence-section { background: #0d1b2d; padding-bottom: 130px; }
 .presence-layout { grid-template-columns: 1fr 1.05fr; gap: 8%; align-items: center; }
-.presence-index { display: flex; align-items: center; gap: 25px; font-size: 110px; line-height: 1; font-weight: 300; color: #dccb9e; letter-spacing: -.08em; margin-bottom: 45px; }
+.presence-index { display: flex; align-items: center; gap: 25px; font-size: 110px; line-height: 1; font-weight: 300; color: #c5a55a; letter-spacing: -.08em; margin-bottom: 45px; }
 .presence-index > span { font-size: 9px; letter-spacing: .14em; line-height: 1.8; max-width: 120px; color: #bdbaaf; }
 .presence-copy h2 { font-size: clamp(46px, 5vw, 74px); }
 .presence-copy .muted { color: #8399b5; }
 .presence-copy > p { color: #bdb8a7; margin-top: 30px; }
 .region-selector { gap: 5px 8px; margin-top: 30px; max-width: none; }
 .region-selector > button { padding: 7px 10px; border: 0; font-size: 10px; background: #ffffff05; color: #bfbbad; }
-.region-selector > button.active { color: #0f1e31; background: #dfd4b6; border: 0; }
+.region-selector > button.active { color: #0f1e31; background: #c5a55a; border: 0; }
 .region-detail > h3 { font-size: 24px; font-weight: 400; }
 .region-detail > a { padding: 9px 0; }
 .india-map { min-height: 650px; margin-top: 0; }
@@ -149,7 +149,7 @@ h2 { font-size: clamp(48px, 6vw, 90px); font-weight: 500; letter-spacing: -.065e
 .strengths-section .section-heading-row > .eyebrow { display: block; margin-top: 35px; color: #7e6835; font-size: 9px; }
 .strengths-grid { display: grid; grid-template-columns: 1fr; gap: 45px; }
 .strengths-grid article { display: grid; grid-template-columns: 45px 1fr; gap: 12px 25px; padding: 0; }
-.strength-number { position: static; grid-row: span 2; font-size: 18px; letter-spacing: -.04em; color: #978352; }
+.strength-number { position: static; grid-row: span 2; font-size: 18px; letter-spacing: -.04em; color: #c5a55a; }
 .strengths-grid article > svg { display: none; }
 .strengths-grid h3 { max-width: none; font-size: 29px; line-height: 1.2; font-weight: 500; color: #1c2a3d; margin: 0; }
 .strengths-grid p { grid-column: 2; color: #56677c; font-size: 14px; line-height: 1.8; margin: 0; }
@@ -162,15 +162,15 @@ h2 { font-size: clamp(48px, 6vw, 90px); font-weight: 500; letter-spacing: -.065e
 .equipment-gallery-photo::after { display: none; }
 .equipment-gallery-photo > span { top: 50px; left: 10%; color: #546478; }
 .equipment-gallery-photo .equipment-photo-label { color: #27384e; bottom: 60px; left: 10%; font-size: 34px; }
-.equipment-copy { color: #f0efe3; padding: 85px 12%; --gold: #d9c797; }
+.equipment-copy { color: #f0efe3; padding: 85px 12%; --gold: #c5a55a; }
 .equipment-copy h2 { font-size: clamp(44px, 4.3vw, 65px); font-weight: 500; }
 .equipment-copy > p, .equipment-current > p { color: #b8b3a3; font-size: 14px; }
 .equipment-current { margin-top: 35px; padding-top: 0; min-height: 150px; }
-.equipment-current > span { color: #d1c197; }
+.equipment-current > span { color: #c5a55a; }
 .equipment-current > h3 { font-size: 28px; font-weight: 400; }
 .equipment-controls > button { border: 0; background: #ffffff0a; }
 .equipment-list { color: #dbd7cc; }
-.equipment-list > summary { color: #d9cba8; }
+.equipment-list > summary { color: #c5a55a; }
 .equipment-list li > button { color: #c6c2b5; }
 
 /* Portraits: the founder leads a gently offset three-person composition. */
@@ -180,7 +180,7 @@ h2 { font-size: clamp(48px, 6vw, 90px); font-weight: 500; letter-spacing: -.065e
 .leadership-portraits article:nth-child(3) { margin-top: 155px; }
 .leader-portrait { height: auto; aspect-ratio: .79; background: #dfdfd3; }
 .leader-portrait img { filter: none; width: 100%; height: 100%; object-fit: cover; object-position: top; }
-.leader-portrait > span { color: #c5b58b; background: #0f1d2fde; padding: 7px 10px; }
+.leader-portrait > span { color: #c5a55a; background: #0f1d2fde; padding: 7px 10px; }
 .leadership-portraits h3 { font-size: 24px; font-weight: 500; line-height: 1.25; margin-top: 25px; }
 .leadership-portraits .leader-role { color: #74613a; font-size: 11px; }
 
@@ -194,7 +194,7 @@ h2 { font-size: clamp(48px, 6vw, 90px); font-weight: 500; letter-spacing: -.065e
 .group-layout > p { color: #c0bbad; max-width: 340px; margin-top: 35px; }
 .group-companies { display: grid; grid-template-columns: 1fr; margin-top: 0; gap: 30px; }
 .group-companies > div { min-height: 0; padding: 6px 0; align-items: baseline; gap: 35px; }
-.group-companies > div > span { color: #bca77b; font-size: 11px; }
+.group-companies > div > span { color: #c5a55a; font-size: 11px; }
 .group-companies h3 { max-width: none; font-size: clamp(19px, 2.2vw, 30px); font-weight: 400; color: #e8e4da; line-height: 1.3; }
 
 /* Institutional trust: a calm logo library and compact source documents. */
@@ -237,7 +237,7 @@ h2 { font-size: clamp(48px, 6vw, 90px); font-weight: 500; letter-spacing: -.065e
 .final-cta h2 { font-size: clamp(70px, 9vw, 138px); font-weight: 500; max-width: 1000px; line-height: .98; margin-top: 35px; }
 .final-cta .container > div { margin-top: 55px; gap: 55px; }
 .final-cta p { color: #c5c1b6; max-width: 340px; }
-.final-cta .button-gold { border-radius: 0; background: #e1d2ab; color: #182638; padding: 20px 30px; }
+.final-cta .button-gold { border-radius: 0; background: #c5a55a; color: #182638; padding: 20px 30px; }
 .final-cta .text-link { color: #e1ded3; }
 .footer { background: #091422; padding-top: 65px; }
 .footer-top { padding-bottom: 0; }

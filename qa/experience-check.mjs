@@ -53,19 +53,20 @@ try {
   const retina = await browser.newPage({ viewport: { width: 1512, height: 982 }, deviceScaleFactor: 2 });
   await retina.goto(base, { waitUntil: 'networkidle' });
   await retina.waitForFunction(() => document.querySelector('.journey-canvas')?.dataset.frame === '0');
+  // At rest the 4K frame is drawn 1:1 (its native crop), so the canvas is at least screen resolution.
+  await retina.waitForFunction(() => document.querySelector('.journey-canvas')?.width >= 3024);
   const detail = await retina.evaluate(() => {
     const section = document.querySelector('.scroll-journey');
     const canvas = document.querySelector('.journey-canvas');
     return { variant: section.dataset.sequenceVariant, width: canvas.width, height: canvas.height, poster: document.querySelector('.journey-poster img').currentSrc };
   });
   assert.equal(detail.variant, 'retina');
-  assert.equal(detail.width, 3024);
-  assert.equal(detail.height, 1964);
+  assert.ok(detail.width >= 3024 && detail.height >= 1964, `Retina canvas ${detail.width} × ${detail.height} is below screen resolution`);
   assert.match(detail.poster, /retina\/000.webp/);
   await retina.evaluate(() => { const el = document.querySelector('.scroll-journey'); scrollTo({ top: (el.offsetHeight - innerHeight) * .485, behavior: 'instant' }); });
   await retina.waitForFunction(() => document.querySelector('.journey-canvas')?.dataset.frame === '87');
   await retina.screenshot({ path: '/tmp/rathore-refresh/retina-hero.png' });
-  console.log('PASS Retina 4K frame selection, 3024 × 1964 canvas, exact frame scrubbing');
+  console.log('PASS Retina 4K frame selection, ≥ 3024 × 1964 canvas at rest, exact frame scrubbing');
   await retina.close();
   const reduced = await browser.newPage({ reducedMotion: 'reduce', viewport: { width: 390, height: 844 } });
   await reduced.goto(base);

@@ -839,7 +839,7 @@ export function PresenceSection() {
                   d={`M27 51 Q${(27 + r.x) / 2 - 8} ${(51 + r.y) / 2 - 10} ${r.x} ${r.y}`}
                   pathLength="1"
                   fill="none"
-                  stroke={i === active ? "#b9a25c" : "#9a8759"}
+                  stroke="#c5a55a"
                   strokeWidth={i === active ? 0.16 : 0.08}
                   opacity={i === active ? 0.65 : 0.2}
                 />
@@ -925,15 +925,15 @@ function IndiaOutline() {
           height="1.7"
           patternUnits="userSpaceOnUse"
         >
-          <circle cx=".85" cy=".85" r=".15" fill="#b59b62" opacity=".35" />
+          <circle cx=".85" cy=".85" r=".15" fill="#c5a55a" opacity=".35" />
         </pattern>
       </defs>
       {india.rings.map((r, i) => (
         <path
           key={i}
           d={r.map(([x, y], j) => `${j ? "L" : "M"}${x} ${y}`).join(" ") + "Z"}
-          fill="#1b3040"
-          stroke="#ad9460"
+          fill="#16305a"
+          stroke="#c5a55a"
           strokeWidth=".3"
         />
       ))}
@@ -1095,7 +1095,6 @@ export function LeadershipSection({ full = false }: { full?: boolean }) {
                   width="500"
                   height="650"
                 />
-                <span>0{i + 1} / LEADERSHIP</span>
               </div>
               <RevealText as="h3">{leader.name}</RevealText>
               <span className="leader-role">{leader.role}</span>

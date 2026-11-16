@@ -96,7 +96,7 @@
 .trust-section .registration-block {
   margin-top: clamp(40px, 5vw, 64px);
   background: var(--theme-blue, #0f2440);
-  color: var(--theme-gold-light, #e8d6a6);
+  color: var(--theme-gold-light, #c5a55a);
   border-left: 3px solid var(--theme-gold, #c5a55a);
 }
 .trust-section .registration-block > button { color: inherit; }

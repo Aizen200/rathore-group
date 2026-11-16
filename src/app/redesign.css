@@ -115,7 +115,7 @@ h2 {
 }
 .nav-cta:hover {
   background: transparent;
-  color: #d8cc80;
+  color: #c5a55a;
 }
 
 /* The sticky viewport is a player whose only timeline is native scroll position. */
@@ -172,13 +172,13 @@ h2 {
   gap: 12px;
   padding: 10px 14px;
   background: #071420e8;
-  border: 1px solid #e6d6ad40;
+  border: 1px solid #c5a55a40;
   color: #f0eee7;
   font-size: 12px;
   z-index: 2;
 }
 .journey-load-status button {
-  color: #e6d6ad;
+  color: #c5a55a;
   text-decoration: underline;
   text-underline-offset: 4px;
   padding: 4px;
@@ -205,7 +205,7 @@ h2 {
   display: block;
   width: 4px;
   height: 4px;
-  background: #b9a25c;
+  background: #c5a55a;
   border-radius: 50%;
 }
 .journey-copy {
@@ -221,13 +221,13 @@ h2 {
   gap: 13px;
   font-size: 9px;
   letter-spacing: 2.3px;
-  color: #dfc68c;
+  color: #c5a55a;
   margin-bottom: 24px;
 }
 .journey-eyebrow > i {
   width: 24px;
   height: 1px;
-  background: #b9a25c;
+  background: #c5a55a;
 }
 .journey-copy h1 {
   font-size: clamp(64px, 7.9vw, 132px);
@@ -241,7 +241,7 @@ h2 {
   display: block;
 }
 .journey-copy h1 > span:last-child {
-  color: #e3d5b3;
+  color: #c5a55a;
 }
 .journey-description {
   display: flex;
@@ -260,18 +260,18 @@ h2 {
   gap: 30px;
   align-items: center;
   color: #f4eee0;
-  border-bottom: 1px solid #c4ae7555;
+  border-bottom: 1px solid #c5a55a55;
   padding: 8px 0;
   font-size: 12px;
   transition: color 0.2s;
 }
 .journey-link:hover {
-  color: #d8cc80;
+  color: #c5a55a;
 }
 .journey-chapter-count {
   font-size: 10px;
   letter-spacing: 2px;
-  color: #c9b079;
+  color: #c5a55a;
 }
 .journey-copy-end {
   left: auto;
@@ -331,7 +331,7 @@ h2 {
 .journey-chapters > button.active,
 .journey-chapters > button:hover {
   opacity: 1;
-  color: #d8cc80;
+  color: #c5a55a;
 }
 .journey-chapters > button > i {
   width: 15px;
@@ -377,11 +377,11 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #b9a25c70;
+  border: 1px solid #c5a55a70;
   width: 43px;
   height: 43px;
   border-radius: 50%;
-  color: #d5bd86;
+  color: #c5a55a;
 }
 .journey-current {
   font-size: 10px;
@@ -407,7 +407,7 @@ h2 {
   width: 100%;
   transform: scaleX(var(--journey-progress));
   transform-origin: left;
-  background: #b9a25c;
+  background: #c5a55a;
 }
 
 /* Editorial scale replaces the old small, uniform section treatments. */

@@ -281,7 +281,7 @@ function CapabilityModel({ kind }: { kind: number }) {
           [-12.5, 0, 11.5],
           [-12.5, 0, -11.5],
         ]}
-        color="#b9a25c"
+        color="#c5a55a"
         lineWidth={1}
       />
       {kind === 0 && (

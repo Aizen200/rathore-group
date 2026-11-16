@@ -71,7 +71,7 @@ function MapModel() {
               ]}
             />
             <meshStandardMaterial
-              color="#263e4b"
+              color="#16305a"
               roughness={0.65}
               metalness={0.45}
             />
@@ -80,7 +80,7 @@ function MapModel() {
             points={india.rings[i].map(
               ([x, y]) => [x - 50, 55 - y, 3.4] as [number, number, number],
             )}
-            color="#b19a65"
+            color="#c5a55a"
             lineWidth={0.8}
           />
         </group>
@@ -102,12 +102,12 @@ export default function IndiaMapScene() {
       <directionalLight
         position={[-30, 50, 40]}
         intensity={3}
-        color="#cfb57c"
+        color="#ffffff"
       />
       <directionalLight
         position={[30, -20, 20]}
         intensity={1.5}
-        color="#87acc8"
+        color="#9fb4d6"
       />
       <MapModel />
     </Canvas>

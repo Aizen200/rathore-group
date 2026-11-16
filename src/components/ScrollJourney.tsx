@@ -77,10 +77,16 @@ export default function ScrollJourney() {
     const mobile = matchMedia("(max-width: 700px)").matches;
     const retina = !mobile && matchMedia("(min-resolution: 1.5dppx), (min-width: 1921px)").matches;
     const variant = mobile ? "mobile" : retina ? "retina" : "desktop";
-    // Scrubbing always uses the lighter set; 4K frames only replace a settled view.
-    const scrubVariant = mobile ? "mobile" : "desktop";
-    const hqVariant = retina && sequence.retina.count === sequence.desktop.count ? "retina" : null;
-    const count = sequence[scrubVariant].count;
+    // Speed-aware resolution, like a video player. Fast scrolling plays the light 1080p frames
+    // (preloaded, quick to decode; motion hides fine detail). On retina screens, slow scrolling
+    // upgrades each frame to 1440p and the resting frame cross-fades to 4K. A single resolution
+    // can't do both: 1080p alone looks soft when moving slowly, 1440p/4K can't decode fast enough
+    // for a quick flick.
+    const retinaFrames = retina && sequence.retina.count === sequence.desktop.count;
+    const scrubVariant: "mobile" | "desktop" = mobile ? "mobile" : "desktop";
+    const detailVariant: "qhd" | null = retinaFrames && sequence.qhd.count === sequence.desktop.count ? "qhd" : null;
+    const hqVariant: "retina" | null = retinaFrames ? "retina" : null;
+    const count = sequence[mobile ? "mobile" : "desktop"].count;
     const previewSpec = sequence.preview[mobile ? "mobile" : "desktop"];
     const previewImage = new Image();
     let preview: Frame = previewImage;
@@ -88,12 +94,19 @@ export default function ScrollJourney() {
     previewImage.fetchPriority = "high";
     let previewReady = false;
     let fullQuality = false;
-    // Decoded frames kept around the playhead (≈8MB each), evicted by distance.
+    // Decoded frames kept around the playhead, evicted by distance
+    // (≈7MB each at 1080p); a few 1440p detail frames (≈13MB) sit around the playhead.
     const limit = mobile ? 14 : 24;
     const concurrency = mobile ? 3 : 5;
     const ahead = mobile ? 10 : 16;
     const behind = mobile ? 4 : 6;
     const cache = new Map<number, Frame>();
+    const detailCache = new Map<number, Frame>();
+    const detailPending = new Map<number, () => void>();
+    let drawnDetail = false;
+    // Playhead speed in frames per screen refresh (smoothed); decides when to add detail.
+    let speed = 0;
+    let lastFrame = -1;
     const hqCache = new Map<number, Frame>();
     const pending = new Map<number, () => void>();
     const attempts = new Map<number, number>();
@@ -105,6 +118,7 @@ export default function ScrollJourney() {
     let direction = 1;
     let lastDrawn = -1;
     let drawnHq = false;
+    let sharpOnScreen = false;
     let frameRequest = 0;
     let destroyed = false;
     let boxWidth = 0,
@@ -112,12 +126,16 @@ export default function ScrollJourney() {
     // Canvas backing sizes: scrubbing only needs the 1080p frame's real resolution; the larger
     // retina size is used just for the settled 4K frame. Fewer pixels = cheaper every frame.
     let scrubSize = { width: 0, height: 0 };
+    // Canvas size while moving: the 1440p frame's native size on retina, so detail frames draw
+    // 1:1 and 1080p frames are scaled up by the GPU without reallocating the canvas.
+    let movingSize = { width: 0, height: 0 };
     let hqSize = { width: 0, height: 0 };
     // Displayed progress eases toward the scroll position so the film glides frame by frame
     // instead of jumping several frames per wheel tick and stopping dead.
     let shown = -1;
     let lastTime = 0;
     root.dataset.sequenceVariant = variant;
+    root.dataset.scrubVariant = scrubVariant;
     root.dataset.frameCount = String(count);
 
     function status(value: LoadState) {
@@ -133,7 +151,7 @@ export default function ScrollJourney() {
     }
     function paint(image: Frame, index: number, quality: "preview" | "full", x = 0, y = 0, width = frameWidth(image), height = frameHeight(image)) {
       if (!context || !element) return;
-      const target = quality === "full" && !(image instanceof HTMLImageElement) ? image : scrubSize;
+      const target = quality === "full" && !(image instanceof HTMLImageElement) && frameWidth(image) > movingSize.width ? image : movingSize;
       setCanvas(target.width, target.height);
       const scale = Math.max(element.width / width, element.height / height);
       context.drawImage(
@@ -146,8 +164,11 @@ export default function ScrollJourney() {
       );
       lastDrawn = index;
       fullQuality = quality === "full";
+      sharpOnScreen = fullQuality;
       drawnHq = false;
+      drawnDetail = false;
       if (root!.dataset.frameQuality !== quality) root!.dataset.frameQuality = quality;
+      root!.dataset.frameSource = image === preview ? "sprite" : String(frameWidth(image));
       if (fullQuality && index === wanted) {
         clearTimeout(statusTimer);
         status("ready");
@@ -169,11 +190,40 @@ export default function ScrollJourney() {
       context.imageSmoothingEnabled = true;
       context.imageSmoothingQuality = "high";
     }
+    let fadeFrame = 0;
+    /** Cross-fades the settled 4K frame over the scrub frame so detail settles in, not pops. */
+    function fadeInHq(index: number) {
+      const hq = hqCache.get(index);
+      const base = detailCache.get(index) ?? cache.get(index);
+      cancelAnimationFrame(fadeFrame);
+      if (!hq || !base || reduced || !context || !element || lastDrawn !== index) return draw(index);
+      const start = performance.now();
+      const step = (now: number) => {
+        if (destroyed) return;
+        if (wanted !== index || lastDrawn !== index) return; // scrolling resumed: abandon the fade
+        const t = Math.min(1, (now - start) / 260);
+        setCanvas(hq.width, hq.height);
+        context.globalAlpha = 1;
+        context.drawImage(base, 0, 0, element.width, element.height);
+        context.globalAlpha = t * t * (3 - 2 * t);
+        context.drawImage(hq, 0, 0, element.width, element.height);
+        context.globalAlpha = 1;
+        if (t < 1) fadeFrame = requestAnimationFrame(step);
+        else draw(index);
+      };
+      fadeFrame = requestAnimationFrame(step);
+    }
     function draw(index: number) {
       const hq = hqCache.get(index);
       if (hq) {
         paint(hq, index, "full");
         drawnHq = true;
+        return;
+      }
+      const detail = detailCache.get(index);
+      if (detail) {
+        paint(detail, index, "full");
+        drawnDetail = true;
         return;
       }
       const image = cache.get(index);
@@ -189,11 +239,26 @@ export default function ScrollJourney() {
     }
     /** Best available picture for the playhead: exact frame, a near neighbour, then the sprite. */
     function render(index: number) {
-      if (cache.has(index) || hqCache.has(index)) {
-        if (index !== lastDrawn || !fullQuality || (hqCache.has(index) && !drawnHq)) draw(index);
+      if (cache.has(index) || hqCache.has(index) || detailCache.has(index)) {
+        if (index !== lastDrawn || !fullQuality || (hqCache.has(index) && !drawnHq) || (detailCache.has(index) && !drawnDetail && !drawnHq)) draw(index);
         return;
       }
-      for (let d = 1; d <= 2; d++) {
+      // Fast scrolling outruns decoding: play forward through the decoded frame closest to the
+      // target (between what's on screen and where the scroll is), so the film keeps moving
+      // and stays sharp, trailing briefly instead of freezing or dropping to the sprite.
+      if (sharpOnScreen && lastDrawn >= 0 && lastDrawn !== index) {
+        const step = index > lastDrawn ? 1 : -1;
+        for (let i = index - step; i !== lastDrawn; i -= step) {
+          if (cache.has(i)) {
+            paint(cache.get(i)!, i, "full");
+            root!.dataset.frameQuality = "preview";
+            fullQuality = false;
+            return;
+          }
+        }
+      }
+      // A sharp frame a few steps away looks far better than the low-res sprite.
+      for (let d = 1; d <= 4; d++) {
         const near = cache.has(index - d * direction) ? index - d * direction : cache.has(index + d * direction) ? index + d * direction : -1;
         if (near >= 0) {
           // A neighbour stands in for the missing frame; it never counts as the full-quality view.
@@ -202,6 +267,16 @@ export default function ScrollJourney() {
           fullQuality = false;
           return;
         }
+      }
+      // Holding a sharp frame a few steps back beats swapping to the low-res sprite.
+      // When the exact frame is already in memory it decodes in ~20ms, so keep the sharp frame
+      // up for that instant rather than flashing the blurry sprite, however fast the scroll.
+      // Only a frame that hasn't downloaded yet (slow network, far jump) falls back to the sprite.
+      const inMemory = blobs.has(frameUrl(scrubVariant, index));
+      if (sharpOnScreen && (inMemory || Math.abs(lastDrawn - index) <= 16)) {
+        root!.dataset.frameQuality = "preview";
+        fullQuality = false;
+        return;
       }
       if (index !== lastDrawn || fullQuality === false) drawPreview(index);
     }
@@ -232,19 +307,22 @@ export default function ScrollJourney() {
      * If fetch is blocked (e.g. a CSP without connect-src), fall back to plain <img> loading.
      */
     let fetchBlocked = typeof createImageBitmap !== "function";
-    function load(src: string, size: { width: number; height: number }, target: { width: number; height: number }, priority: "high" | "low", done: (image: Frame | null) => void) {
+    // Compressed frames kept in memory (26MB at 1080p, 41MB at 1440p, 15MB on phones) so a
+    // fast scroll only has to decode, never wait on the network.
+    const blobs = new Map<string, Blob>();
+    function load(src: string, key: string | null, size: { width: number; height: number }, target: { width: number; height: number }, priority: "high" | "low", done: (image: Frame | null, decodeMs?: number) => void) {
       let settled = false;
       let abortImage = () => {};
       const controller = new AbortController();
       const timer = setTimeout(() => finish(null), 10000);
-      function finish(frame: Frame | null) {
+      function finish(frame: Frame | null, decodeMs?: number) {
         if (settled) {
           if (frame) release(frame);
           return;
         }
         settled = true;
         clearTimeout(timer);
-        done(frame);
+        done(frame, decodeMs);
       }
       function viaImage() {
         const image = new Image();
@@ -263,14 +341,26 @@ export default function ScrollJourney() {
         const scale = Math.max(target.width / iw, target.height / ih);
         const sw = Math.min(iw, Math.round(target.width / scale));
         const sh = Math.min(ih, Math.round(target.height / scale));
-        const options = { resizeWidth: target.width, resizeHeight: target.height, resizeQuality: "high" as const };
-        fetch(src, { signal: controller.signal, priority } as RequestInit)
+        // When the canvas matches the cropped frame (the usual case) skip resampling entirely:
+        // resizing a 4K frame costs ~30ms extra and stretching 1080p up costs ~145ms.
+        const options: ImageBitmapOptions = Math.abs(sw - target.width) <= 2 && Math.abs(sh - target.height) <= 2
+          ? {}
+          : { resizeWidth: target.width, resizeHeight: target.height, resizeQuality: "medium" };
+        const decode = (blob: Blob) => {
+          const started = performance.now();
+          return createImageBitmap(blob, Math.round((iw - sw) / 2), Math.round((ih - sh) / 2), sw, sh, options)
+            .then(frame => finish(frame, performance.now() - started), () => finish(null));
+        };
+        const stored = key ? blobs.get(key) : undefined;
+        if (stored) decode(stored);
+        else fetch(src, { signal: controller.signal, priority } as RequestInit)
           .then(
             response => {
               if (!response.ok) return finish(null);
-              return response.blob()
-                .then(blob => createImageBitmap(blob, Math.round((iw - sw) / 2), Math.round((ih - sh) / 2), sw, sh, options))
-                .then(finish, () => finish(null));
+              return response.blob().then(blob => {
+                if (key) blobs.set(key, blob);
+                return decode(blob);
+              }, () => finish(null));
             },
             error => {
               if (settled || (error as Error).name === "AbortError") return;
@@ -287,6 +377,62 @@ export default function ScrollJourney() {
         abortImage();
       };
     }
+    let preloadTimer: ReturnType<typeof setTimeout> | undefined;
+    let preloading = 0;
+    let preloadSet = "";
+    const preloadAborts = new Set<AbortController>();
+    function preloadAllowed() {
+      const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+      return !reduced && !fetchBlocked && !connection?.saveData && !/(^|-)2g$|^3g$/.test(connection?.effectiveType || "");
+    }
+    /** Fetches the rest of the scrub set in the background, nearest the playhead first. */
+    function preload() {
+      if (destroyed || !preloadAllowed()) return;
+      // Never compete with frames needed on screen right now: wait until loading goes idle.
+      if (pending.size > 0 || speed > 0) {
+        clearTimeout(preloadTimer);
+        preloadTimer = setTimeout(preload, 250);
+        return;
+      }
+      if (preloadSet !== scrubVariant) {
+        preloadSet = scrubVariant;
+        for (const controller of preloadAborts) controller.abort();
+        preloadAborts.clear();
+        preloading = 0;
+      }
+      const missing: number[] = [];
+      // Frames that already failed are left to the on-screen loader and its retry limit.
+      for (let i = 0; i < count; i++) if (!blobs.has(frameUrl(scrubVariant, i)) && !attempts.has(i)) missing.push(i);
+      missing.sort((a, b) => Math.abs(a - wanted) - Math.abs(b - wanted));
+      while (preloading < (mobile ? 2 : 3) && missing.length) {
+        const index = missing.shift()!;
+        const key = frameUrl(scrubVariant, index);
+        if ([...pending.keys()].includes(index)) continue;
+        const set = scrubVariant;
+        const controller = new AbortController();
+        preloadAborts.add(controller);
+        preloading++;
+        fetch(key, { signal: controller.signal, priority: "low" } as RequestInit)
+          .then(response => (response.ok ? response.blob() : null))
+          .then(blob => {
+            if (set !== scrubVariant) return;
+            if (blob) {
+              blobs.set(key, blob);
+              root!.dataset.preloaded = String(blobs.size);
+            } else attempts.set(index, (attempts.get(index) || 0) + 1);
+          }, (error: Error) => {
+            if (error.name === "AbortError" || set !== scrubVariant) return;
+            fetchBlocked = true; // connection refused (e.g. CSP): stop preloading
+          })
+          .finally(() => {
+            preloadAborts.delete(controller);
+            if (set !== preloadSet) return;
+            preloading--;
+            clearTimeout(preloadTimer);
+            preloadTimer = setTimeout(preload, 0);
+          });
+      }
+    }
     function pump() {
       if (destroyed) return;
       while (pending.size < concurrency && queue.length) {
@@ -301,14 +447,14 @@ export default function ScrollJourney() {
         }
         const attempt = (attempts.get(index) || 0) + 1;
         attempts.set(index, attempt);
-        const abort = load(frameUrl(scrubVariant, index, attempt), sequence[scrubVariant], scrubSize, index === wanted ? "high" : "low", image => {
+        const abort = load(frameUrl(scrubVariant, index, attempt), frameUrl(scrubVariant, index), sequence[scrubVariant], scrubSize, index === wanted ? "high" : "low", image => {
           if (destroyed || pending.get(index) !== cancel) return;
           pending.delete(index);
           if (image) {
             cache.set(index, image);
             attempts.delete(index);
             evict();
-            if (index === wanted || (!fullQuality && Math.abs(index - wanted) <= 2)) render(wanted);
+            if (index === wanted || (!fullQuality && Math.abs(index - wanted) <= 4)) render(wanted);
           } else if (index === wanted) {
             if (attempt < 2) queue.unshift(index);
             else {
@@ -325,10 +471,29 @@ export default function ScrollJourney() {
         pending.set(index, cancel);
       }
     }
+    /** Upgrades the playhead frame to 1440p while scrolling slowly (two decodes at a time). */
+    function loadDetail(index: number) {
+      if (!detailVariant || index < 0 || index >= count || detailCache.has(index) || detailPending.has(index) || detailPending.size >= 2 || destroyed) return;
+      const key = frameUrl(detailVariant, index);
+      const abort = load(key, key, sequence[detailVariant], movingSize, "low", image => {
+        detailPending.delete(index);
+        if (destroyed || !image) return;
+        detailCache.set(index, image);
+        while (detailCache.size > 6) {
+          let farthest = -1;
+          for (const n of detailCache.keys()) if (n !== lastDrawn && (farthest < 0 || Math.abs(n - wanted) > Math.abs(farthest - wanted))) farthest = n;
+          if (farthest < 0) break;
+          release(detailCache.get(farthest)!);
+          detailCache.delete(farthest);
+        }
+        if (index === wanted && lastDrawn === index && !drawnHq) draw(index);
+      });
+      detailPending.set(index, abort);
+    }
     function loadHq(index: number) {
       // One 4K download at a time, never cancelled mid-flight (they are ~1MB each).
       if (!hqVariant || hqCache.has(index) || hqPending || destroyed) return;
-      const abort = load(frameUrl(hqVariant, index), sequence[hqVariant], hqSize, "low", image => {
+      const abort = load(frameUrl(hqVariant, index), null, sequence[hqVariant], hqSize, "low", image => {
         hqPending = null;
         if (destroyed) return;
         if (!image) return;
@@ -340,7 +505,7 @@ export default function ScrollJourney() {
             hqCache.delete(key);
           }
         }
-        if (index === wanted) draw(index);
+        if (index === wanted) fadeInHq(index);
         else scheduleHq();
       });
       hqPending = abort;
@@ -357,18 +522,35 @@ export default function ScrollJourney() {
       render(index);
       // Drop downloads that fell out of the window around the playhead.
       for (const [n, cancel] of pending) {
-        if (n - index > ahead + 4 || index - n > ahead + 4) {
+        const rel = (n - index) * direction; // positive = ahead in the direction of travel
+        if (rel > ahead * 4 + 4 || rel < -(ahead + 4)) {
           pending.delete(n);
           cancel();
         }
       }
-      // Current frame first, then frames in the direction of travel, then a few behind.
+      // Current frame first, then frames in the direction of travel, then a few behind. At very
+      // high speed decode every 2nd-4th frame ahead: more sharp frames ready along the path, and
+      // skipped in-betweens are invisible at that speed.
+      const stride = speed > 3 ? Math.min(4, Math.round(speed / 2)) : 1;
       const next: number[] = [index];
-      for (let d = 1; d <= ahead; d++) next.push(index + d * direction);
+      for (let d = 1; d <= ahead; d++) next.push(index + d * stride * direction);
       for (let d = 1; d <= behind; d++) next.push(index - d * direction);
       queue = next.filter(n => n >= 0 && n < count && !cache.has(n) && !pending.has(n));
       if (!cache.has(index) && changed) waitForFrame();
       pump();
+      if (detailVariant) {
+        for (const [n, cancel] of detailPending) {
+          if (Math.abs(n - index) > 2) {
+            detailPending.delete(n);
+            cancel();
+          }
+        }
+        // Slow enough for the eye to see detail: fetch the 1440p version of this frame and the next.
+        if (speed < 0.6) {
+          loadDetail(index);
+          loadDetail(index + direction);
+        }
+      }
       scheduleHq();
     }
     function scheduleHq() {
@@ -403,11 +585,24 @@ export default function ScrollJourney() {
         if (Math.abs(progress - shown) * (count - 1) < 0.08) shown = progress;
       }
       lastTime = now;
-      if (visible) request(Math.round(shown * (count - 1)));
+      const frame = shown * (count - 1);
+      speed = lastFrame < 0 ? 0 : speed * 0.6 + Math.abs(frame - lastFrame) * 0.4;
+      lastFrame = frame;
+      if (shown === progress) speed = 0;
+      if (visible) request(Math.round(frame));
       if (shown !== progress) frameRequest = requestAnimationFrame(update);
     }
     function scroll() {
       if (!frameRequest) frameRequest = requestAnimationFrame(update);
+    }
+    function fit(src: { width: number; height: number }) {
+      // Never allocate more canvas pixels than the source frame can actually fill.
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      // Use the frame's native density when it is close to the screen's, so frames are drawn
+      // 1:1 without resampling and the GPU does the final (cheap, crisp) scale on screen.
+      const native = 1 / Math.max(boxWidth / src.width, boxHeight / src.height);
+      const density = native <= dpr * 1.25 ? Math.max(1, native) : Math.max(1, dpr);
+      return { width: Math.round(boxWidth * density), height: Math.round(boxHeight * density) };
     }
     function resize() {
       if (!element) return;
@@ -415,15 +610,10 @@ export default function ScrollJourney() {
       if (rect.width === boxWidth && rect.height === boxHeight) return;
       boxWidth = rect.width;
       boxHeight = rect.height;
-      const dpr = Math.min(devicePixelRatio || 1, 2);
-      // Never allocate more canvas pixels than the source frame can actually fill.
-      const fit = (src: { width: number; height: number }) => {
-        const density = Math.min(dpr, Math.max(1, 1 / Math.max(rect.width / src.width, rect.height / src.height)));
-        return { width: Math.round(rect.width * density), height: Math.round(rect.height * density) };
-      };
       scrubSize = fit(sequence[scrubVariant]);
-      hqSize = hqVariant ? fit(sequence[hqVariant]) : scrubSize;
-      setCanvas(scrubSize.width, scrubSize.height);
+      movingSize = detailVariant ? fit(sequence[detailVariant]) : scrubSize;
+      hqSize = hqVariant ? fit(sequence[hqVariant]) : movingSize;
+      setCanvas(movingSize.width, movingSize.height);
       if (lastDrawn >= 0) {
         lastDrawn = -1;
         render(wanted);
@@ -431,8 +621,12 @@ export default function ScrollJourney() {
       // Cached bitmaps were cut for the old canvas size; rebuild them at the new one.
       for (const frame of cache.values()) release(frame);
       for (const frame of hqCache.values()) release(frame);
+      for (const frame of detailCache.values()) release(frame);
+      for (const cancel of detailPending.values()) cancel();
       cache.clear();
       hqCache.clear();
+      detailCache.clear();
+      detailPending.clear();
       if (wanted !== lastDrawn || !fullQuality) lastDrawn = -1;
       scroll();
     }
@@ -468,9 +662,14 @@ export default function ScrollJourney() {
     if (!reduced) previewImage.src = `${previewSpec.src}?v=${sequence.version}`;
     resize();
     update();
+    preloadTimer = setTimeout(preload, 1500);
     return () => {
       destroyed = true;
       cancelAnimationFrame(frameRequest);
+      cancelAnimationFrame(fadeFrame);
+      clearTimeout(preloadTimer);
+      for (const controller of preloadAborts) controller.abort();
+      blobs.clear();
       observer.disconnect();
       removeEventListener("scroll", scroll);
       removeEventListener("resize", resize);
@@ -479,7 +678,10 @@ export default function ScrollJourney() {
       hqPending?.();
       for (const frame of hqCache.values()) release(frame);
       for (const frame of cache.values()) release(frame);
+      for (const frame of detailCache.values()) release(frame);
+      for (const cancel of detailPending.values()) cancel();
       hqCache.clear();
+      detailCache.clear();
       previewImage.onload = null;
       previewImage.removeAttribute("src");
       if (preview !== previewImage) release(preview);

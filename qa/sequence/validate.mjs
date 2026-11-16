@@ -2,10 +2,11 @@ import { readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
 const fingerprint=createHash('sha256');
-const manifest={basePath:'/film-hq',kind:'real-footage',version:'',desktop:{count:180,width:1920,height:1080},retina:{count:180,width:3840,height:2160},mobile:{count:120,width:1080,height:1920},preview:{desktop:{src:'/film-preview/desktop.webp',count:48,columns:8,width:480,height:270},mobile:{src:'/film-preview/mobile.webp',count:36,columns:6,width:270,height:480}}};
+const manifest={basePath:'/film-hq',kind:'real-footage',version:'',desktop:{count:180,width:1920,height:1080},retina:{count:180,width:3840,height:2160},qhd:{count:180,width:2560,height:1440},mobile:{count:120,width:1080,height:1920},preview:{desktop:{src:'/film-preview/desktop.webp',count:48,columns:8,width:480,height:270},mobile:{src:'/film-preview/mobile.webp',count:36,columns:6,width:270,height:480}}};
 for (const [variant, count, width, height] of [
   ["desktop", 180, 1920, 1080],
   ["retina", 180, 3840, 2160],
+  ["qhd", 180, 2560, 1440],
   ["mobile", 120, 1080, 1920],
 ]) {
   const folder = path.resolve("public/film-hq", variant);

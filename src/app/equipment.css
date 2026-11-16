@@ -1,19 +1,19 @@
 /* The equipment bank: a numbered spec-sheet list driving a full-bleed photo stage. */
-.equipment-section.fleet-section { display: block; background: #111e2f; color: #f1eee2; padding-block: clamp(72px, 8vw, 120px); --gold: #d8c594; }
+.equipment-section.fleet-section { display: block; background: #111e2f; color: #f1eee2; padding-block: clamp(72px, 8vw, 120px); --gold: #c5a55a; }
 .fleet-section .section-label { margin-bottom: 44px; color: #cbc6b9; }
 .fleet-section .section-number { color: #8596ac; }
 .fleet-heading { display: grid; grid-template-columns: 1.4fr 1fr; align-items: end; gap: 8%; margin-bottom: 56px; }
 .fleet-section .fleet-heading h2 { font-size: clamp(48px, 5.7vw, 84px); line-height: 1.07; font-weight: 500; letter-spacing: -.06em; }
-.fleet-heading .serif-accent { color: #d8c594 !important; }
+.fleet-heading .serif-accent { color: #c5a55a !important; }
 .fleet-intro { max-width: 350px; justify-self: end; padding-bottom: 7px; }
-.fleet-intro > span { font-size: 9px; letter-spacing: .12em; color: #cabb95; }
+.fleet-intro > span { font-size: 9px; letter-spacing: .12em; color: #c5a55a; }
 .fleet-intro p { color: #c0bdb2; font-size: 14px; line-height: 1.85; margin-top: 16px; }
 
 /* Layout */
 .eqb {
   --eqb-gold: var(--theme-gold, #c5a55a);
-  --eqb-gold-light: var(--theme-gold-light, #e8d6a6);
-  --eqb-muted: #b9a77a;
+  --eqb-gold-light: var(--theme-gold-light, #c5a55a);
+  --eqb-muted: #c5a55a;
   --eqb-deep: var(--theme-blue-deep, #0a1a30);
   --eqb-line: #ffffff1a;
   display: grid;
