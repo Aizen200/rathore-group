@@ -1340,6 +1340,7 @@ dialog::backdrop {
   font-size: 8px;
 }
 .project-dialog {
+  margin: auto; /* global `* { margin: 0 }` strips the native dialog centering */
   padding: 0;
   border: 1px solid #c5a55a60;
   width: min(950px, 92vw);
@@ -1373,7 +1374,8 @@ dialog::backdrop {
 }
 .project-dialog-image > span {
   position: absolute;
-  bottom: 15px;
+  /* top, not bottom: site photos often carry a GPS-camera stamp along the bottom edge */
+  top: 15px;
   left: 15px;
   background: #0c192bc9;
   color: #fff;
@@ -1388,6 +1390,12 @@ dialog::backdrop {
   font-size: 8px;
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+/* The word-reveal title is never marked .is-in-view inside a dialog (the scroll observer skips
+   dialogs), so it stayed invisible. Reveal it when the dialog opens instead. */
+.motion-enabled .project-dialog[open] .text-reveal .reveal-word > span {
+  transform: none;
+  opacity: 1;
 }
 .project-dialog-copy h2 {
   font-size: 33px;
