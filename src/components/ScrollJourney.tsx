@@ -773,7 +773,7 @@ export default function ScrollJourney() {
           )}
           <img
             src={`${sequence.basePath}/desktop/000.webp?v=${sequence.version}`}
-            alt="A building rising from foundations to a finished glass tower; illustrative construction footage"
+            alt="A highway being built, from earthworks and rolling to asphalt paving, ending as a lit expressway at night; illustrative road construction footage"
             width="1920"
             height="1080"
             fetchPriority="high"
