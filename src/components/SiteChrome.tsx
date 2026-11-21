@@ -13,22 +13,20 @@ export function Logo({ small = false }: { small?: boolean }) {
         <img src="/images/crest.webp" alt="" width="273" height="288" />
       </span>
       <span className="brand-text">
-        RATHORE GROUP<small>BUILDING A LEGACY SINCE 1994</small>
+        RATHORE GROUP
       </span>
     </Link>
   );
 }
 const links = [
   ["About", "/about/"],
-  ["Capabilities", "/capabilities/"],
   ["Projects", "/projects/"],
+  ["Capabilities", "/capabilities/"],
   ["Our presence", "/our-presence/"],
   ["Leadership", "/leadership/"],
 ];
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
   const [pill, setPill] = useState<{ left: number; width: number } | null>(
     null,
@@ -65,9 +63,8 @@ export function Navbar() {
     return () => observer.disconnect();
   }, [pathname]);
 
-  // Condense after a little scroll; tuck away while scrolling down, return on scroll up.
+  // Condense after a little scroll; the bar stays pinned to the top while scrolling.
   useEffect(() => {
-    let last = window.scrollY;
     let frame = 0;
     const handle = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -81,10 +78,6 @@ export function Navbar() {
         "--hdr-progress",
         String(max > 0 ? Math.min(y / max, 1) : 0),
       );
-      if (Math.abs(y - last) > 6) {
-        setHidden(y > last && y > 420);
-        last = y;
-      }
     };
     update();
     window.addEventListener("scroll", handle, { passive: true });
@@ -107,7 +100,6 @@ export function Navbar() {
 
   function openMenu() {
     dialog.current?.showModal();
-    setMenuOpen(true);
   }
   function closeMenu() {
     dialog.current?.close();
@@ -120,10 +112,10 @@ export function Navbar() {
       </a>
       <header
         ref={headerRef}
-        className={`hdr${scrolled ? " is-scrolled" : ""}${hidden && !menuOpen ? " is-hidden" : ""}`}
+        className={`hdr${scrolled ? " is-scrolled" : ""}`}
       >
         <div className="hdr-strip">
-          <span>Est. {company.founded} · Mumbai, India</span>
+          <span />
           <span className="hdr-strip-contact">
             <a href={`tel:${company.phone.replace(/[^0-9+]/g, "")}`}>
               <Phone size={12} /> {company.phone}
@@ -143,7 +135,6 @@ export function Navbar() {
               <img src="/images/crest.webp" alt="" width="273" height="288" />
               <span>
                 <strong>Rathore Group</strong>
-                <small>Building a legacy since {company.founded}</small>
               </span>
             </Link>
             <nav
@@ -209,14 +200,12 @@ export function Navbar() {
         aria-label="Navigation"
         className="hdr-menu"
         ref={dialog}
-        onClose={() => setMenuOpen(false)}
       >
         <div className="hdr-menu-top">
           <Link className="hdr-brand" href="/" onClick={closeMenu}>
             <img src="/images/crest.webp" alt="" width="273" height="288" />
             <span>
               <strong>Rathore Group</strong>
-              <small>Building a legacy since {company.founded}</small>
             </span>
           </Link>
           <button
@@ -281,7 +270,6 @@ export function Footer() {
       </div>
       <div className="footer-grid">
         <div>
-          <span className="eyebrow">A LEGACY IN THE MAKING</span>
           <h3>
             Built on trust.
             <br />

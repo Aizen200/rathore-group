@@ -102,28 +102,9 @@ for (const variant of [
       await page.screenshot({
         path: `/tmp/rathore-redesign/${variant.name}-frame-${expected}.png`,
       });
-    if (p === 1) {
-      await page.getByRole("link", { name: "Continue to company overview" }).click();
-      await page.waitForFunction(() => {
-        const rect = document.querySelector("#at-a-glance")?.getBoundingClientRect();
-        return !!rect && rect.top >= -1 && rect.top <= 150;
-      });
-      if (!page.url().endsWith("#at-a-glance"))
-        throw Error(`${variant.name}: final chapter did not continue to the overview`);
-      console.log("PASS", variant.name, "final chapter continues to company overview");
-    }
   }
   if (new Set([...hashes.values()].map((s) => s.hash)).size < 7)
     throw Error("The sequence does not contain enough distinct images");
-  await page.getByRole("button", { name: /Go to The purpose/ }).click();
-  await page.waitForFunction(
-    (expected) =>
-      Number(document.querySelector(".journey-canvas")?.dataset.frame) ===
-      expected && document.querySelector('.scroll-journey')?.dataset.frameQuality === 'full',
-    Math.round(0.485 * (variant.count - 1)),
-    { timeout: 15000 },
-  );
-  console.log("PASS", variant.name, "chapter navigation");
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth > innerWidth + 1,
   );

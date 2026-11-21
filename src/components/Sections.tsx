@@ -50,52 +50,47 @@ export function SectionLabel({
   children: React.ReactNode;
   number?: string;
 }) {
-  return (
-    <div className="section-label">
-      <span className="gold-line" />
-      {children}
-      {number && <span className="section-number">{number}</span>}
-    </div>
-  );
+  // Section labels (small eyebrows above headings) are no longer shown on the site.
+  void children;
+  void number;
+  return null;
 }
 export function AboutSection({ full = false }: { full?: boolean }) {
   return (
-    <section className="about-section section-pad" id="about">
+    <section className="about-section story-section section-pad" id="about">
       <div className="container">
-        <SectionLabel number="01 / A FOUNDATION OF TRUST">
-          THE RATHORE STORY
-        </SectionLabel>
-        <div className="about-layout">
-          <div className="about-copy">
+        <div className="story-head">
+          <div className="story-title">
             <RevealText as="h2">
               Three decades of
               <br />
-              engineering
-              <br />
-              <span className="serif-accent">excellence.</span>
+              engineering <span className="story-gold">excellence.</span>
             </RevealText>
-            <p className="lead-text">
-              Built with purpose.
-              <br />
-              Defined by the things that last.
+          </div>
+          <div className="story-intro">
+            <p className="story-lead">
+              Built with purpose. Defined by the things that last.
             </p>
             <p>
               Established in 1994 and headquartered in Mumbai, R & B Infra
               Project Limited delivers civil, mechanical and electrical
-              engineering works across India.
-            </p>
-            <p>
-              From the roads that connect us to the water systems that sustain
-              us, our work is part of everyday life. We bring together
-              experience, engineering and an unwavering commitment to execution.
+              engineering works across India. From the roads that connect us to
+              the water systems that sustain us, our work is part of everyday
+              life.
             </p>
             {!full && (
-              <Link href="/about/" className="underlined-link">
-                Get to know Rathore Group <ArrowUpRight size={19} />
+              <Link href="/about/" className="story-link">
+                Get to know Rathore Group
+                <span>
+                  <ArrowUpRight size={18} />
+                </span>
               </Link>
             )}
           </div>
-          <div className="about-image">
+        </div>
+
+        <div className="story-mosaic">
+          <figure className="story-photo story-photo-main">
             <img
               src="/images/projects/sirohi-medical-college.webp"
               alt="Medical College at Sirohi, photograph from the 2026 corporate profile"
@@ -103,28 +98,66 @@ export function AboutSection({ full = false }: { full?: boolean }) {
               width="900"
               height="1100"
             />
-            <div className="image-caption">
-              <span>MEDICAL COLLEGE</span>
-              <span>
-                SIROHI, RAJASTHAN <ArrowUpRight size={14} />
-              </span>
+            <figcaption>
+              <span>FEATURED PROJECT</span>
+              <strong>Medical College</strong>
+              <em>
+                <MapPin size={13} /> Sirohi, Rajasthan
+              </em>
+            </figcaption>
+          </figure>
+
+          <div className="story-legacy">
+            <div className="story-legacy-top">
+              <span>EST.</span>
+              <span>1994</span>
             </div>
-            <div className="legacy-tag">
-              <span>
-                30<span>+</span>
-              </span>
-              <p>
-                YEARS OF
-                <br />
-                BUILDING TRUST
-              </p>
-            </div>
-            <div className="image-corner" />
+            <strong>
+              30<sup>+</sup>
+            </strong>
+            <p>Years of building trust across India</p>
+            <div className="story-legacy-rule" />
+            <ul>
+              <li>Civil</li>
+              <li>Mechanical</li>
+              <li>Electrical</li>
+            </ul>
           </div>
+
+          <figure className="story-photo story-photo-side">
+            <img
+              src="/images/projects/pangong-road.webp"
+              alt="Lukung–Chartse road in Ladakh"
+              loading="lazy"
+              width="700"
+              height="500"
+            />
+            <figcaption>
+              <span>ROADS</span>
+              <strong>Lukung–Chartse, Ladakh</strong>
+            </figcaption>
+          </figure>
         </div>
-        <div className="vision-mission">
-          <div>
-            <span>01 / OUR VISION</span>
+
+        <ul className="story-facts">
+          {[
+            { icon: Building2, value: "Mumbai", label: "Headquarters" },
+            { icon: Route, value: "Pan-India", label: "Project footprint" },
+            { icon: Waves, value: "Water & roads", label: "Core infrastructure" },
+            { icon: Recycle, value: "Waste-to-energy", label: "New frontiers" },
+          ].map((f) => (
+            <li key={f.label}>
+              <f.icon size={22} strokeWidth={1.4} aria-hidden="true" />
+              <div>
+                <strong>{f.value}</strong>
+                <span>{f.label}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <div className="story-vm">
+          <article className="story-vm-card story-vm-dark">
             <RevealText as="h3">
               A larger vision.
               <br />A lasting difference.
@@ -134,9 +167,8 @@ export function AboutSection({ full = false }: { full?: boolean }) {
               civil construction, solid waste management, storm water drainage
               and related sectors.
             </p>
-          </div>
-          <div>
-            <span>02 / OUR MISSION</span>
+          </article>
+          <article className="story-vm-card">
             <RevealText as="h3">
               Quality in every detail.
               <br />
@@ -146,7 +178,7 @@ export function AboutSection({ full = false }: { full?: boolean }) {
               To deliver quality services, maintain efficiency and establish a
               strong presence across the globe.
             </p>
-          </div>
+          </article>
         </div>
         {full && (
           <div className="history-line">
@@ -191,10 +223,30 @@ const capabilityProjects = [
 
 export function CapabilitiesSection({ full = false }: { full?: boolean }) {
   const [active, setActive] = useState(0);
-  const c = capabilities[active];
-  const project = capabilityProjects[active];
+  const stepRefs = useRef<(HTMLLIElement | null)[]>([]);
   const icons = [Building2, Route, Waves, Recycle];
-  const ActiveIcon = icons[active];
+
+  // Activate whichever step crosses the middle band of the viewport.
+  useEffect(() => {
+    const steps = stepRefs.current.filter(Boolean) as HTMLLIElement[];
+    if (!steps.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(Number((entry.target as HTMLElement).dataset.index));
+        });
+      },
+      { rootMargin: "-45% 0px -45% 0px" },
+    );
+    steps.forEach((step) => observer.observe(step));
+    return () => observer.disconnect();
+  }, []);
+
+  const goTo = (i: number) => {
+    setActive(i);
+    stepRefs.current[i]?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
   return (
     <section
       className="capabilities-section expertise-section section-pad"
@@ -209,80 +261,69 @@ export function CapabilitiesSection({ full = false }: { full?: boolean }) {
             <span className="serif-accent">Engineered to last.</span>
           </RevealText>
           <div className="expertise-intro">
-            <span className="expertise-kicker">FOUR DISCIPLINES. ONE SHARED PURPOSE.</span>
             <p>From the places we gather to the systems we depend on. We build the infrastructure that moves everyday life forward.</p>
           </div>
         </div>
-        <div className="expertise-tabs" role="tablist" aria-label="Infrastructure capabilities">
-          {capabilities.map((item, i) => (
-            <button
-              key={item.id}
-              className="expertise-tab"
-              role="tab"
-              id={`tab-${item.id}`}
-              aria-selected={active === i}
-              aria-controls="capability-panel"
-              tabIndex={active === i ? 0 : -1}
-              onClick={() => setActive(i)}
-              onKeyDown={(event) => {
-                let next = i;
-                if (event.key === "ArrowRight") next = (i + 1) % capabilities.length;
-                else if (event.key === "ArrowLeft") next = (i - 1 + capabilities.length) % capabilities.length;
-                else if (event.key === "Home") next = 0;
-                else if (event.key === "End") next = capabilities.length - 1;
-                else return;
-                event.preventDefault();
-                setActive(next);
-                const tabs = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]');
-                tabs?.[next]?.focus();
-              }}
-            >
-              <span className="expertise-tab-number">{item.number}</span>
-              <span className="expertise-tab-title">{item.title}</span>
-              <span className="expertise-tab-focus">{capabilityProjects[i].focus}</span>
-              <ArrowUpRight size={20} aria-hidden="true" />
-            </button>
-          ))}
-        </div>
-        <div
-          className="expertise-panel"
-          role="tabpanel"
-          id="capability-panel"
-          aria-labelledby={`tab-${c.id}`}
-          tabIndex={0}
-        >
-          <figure className="expertise-photo" key={`image-${c.id}`}>
-            <img
-              src={project.image}
-              alt={`${project.title}, ${project.location}`}
-              loading="lazy"
-              width="1000"
-              height="850"
-            />
-            <span className="expertise-photo-tag">IN THE FIELD / {c.number}</span>
-            <figcaption>
-              <div><span>OUR WORK IN FOCUS</span><strong>{project.title}</strong></div>
-              <span className="expertise-location"><MapPin size={14} aria-hidden="true" />{project.location}</span>
-            </figcaption>
-          </figure>
-          <div className="expertise-detail" key={c.id}>
-            <div className="expertise-detail-top">
-              <ActiveIcon size={27} strokeWidth={1.25} aria-hidden="true" />
-              <span>{c.number} / 04</span>
-            </div>
-            <RevealText as="h3">{c.subtitle}</RevealText>
-            <p>{c.description}</p>
-            <ul>
-              {c.items.map((item) => <li key={item}><span aria-hidden="true" />{item}</li>)}
-            </ul>
-            <Link
-              href={full ? "/contact/" : `/capabilities/#${c.id}`}
-              className="expertise-link"
-            >
-              {full ? "Discuss a project" : "Explore this capability"}
-              <span><ArrowUpRight size={20} aria-hidden="true" /></span>
-            </Link>
+
+        <div className="expertise-process">
+          <div className="expertise-media" aria-hidden="true">
+            {capabilityProjects.map((project, i) => (
+              <figure key={project.image} className={`expertise-media-frame${active === i ? " is-active" : ""}`}>
+                <img src={project.image} alt="" loading="lazy" width="1000" height="850" />
+                <figcaption>
+                  <strong>{project.title}</strong>
+                  <span><MapPin size={14} />{project.location}</span>
+                </figcaption>
+              </figure>
+            ))}
           </div>
+
+          <ol className="expertise-steps" aria-label="Infrastructure capabilities">
+            {capabilities.map((item, i) => {
+              const Icon = icons[i];
+              const project = capabilityProjects[i];
+              const isActive = active === i;
+              return (
+                <li
+                  key={item.id}
+                  ref={(el) => { stepRefs.current[i] = el; }}
+                  data-index={i}
+                  className={`expertise-step${isActive ? " is-active" : ""}${i < active ? " is-past" : ""}`}
+                >
+                  <div className="expertise-rail">
+                    <button
+                      type="button"
+                      className="expertise-node"
+                      onClick={() => goTo(i)}
+                      aria-label={`Show ${item.title}`}
+                      aria-current={isActive ? "step" : undefined}
+                    >
+                      <Icon size={20} strokeWidth={1.5} aria-hidden="true" />
+                    </button>
+                  </div>
+                  <article className="expertise-card">
+                    <figure className="expertise-card-media">
+                      <img src={project.image} alt={`${project.title}, ${project.location}`} loading="lazy" width="1000" height="850" />
+                    </figure>
+                    <span className="expertise-card-number">{item.number}</span>
+                    <h3>{item.title}</h3>
+                    <p className="expertise-card-subtitle">{item.subtitle}</p>
+                    <p>{item.description}</p>
+                    <ul>
+                      {item.items.map((entry) => <li key={entry}><span aria-hidden="true" />{entry}</li>)}
+                    </ul>
+                    <Link
+                      href={full ? "/contact/" : `/capabilities/#${item.id}`}
+                      className="expertise-link"
+                    >
+                      {full ? "Discuss a project" : "Explore this capability"}
+                      <span><ArrowUpRight size={18} aria-hidden="true" /></span>
+                    </Link>
+                  </article>
+                </li>
+              );
+            })}
+          </ol>
         </div>
         {full && (
           <div className="capability-all">
@@ -352,13 +393,6 @@ function ProjectDialog({
                   : `${project.category} sector illustration; not a photograph of this project`
               }
             />
-            <span>
-              {project.image
-                ? project.imageNote?.startsWith("Architectural")
-                  ? "PROFILE · ARCHITECTURAL VISUALIZATION"
-                  : "2026 PROFILE · PROJECT IMAGE"
-                : "SECTOR IMAGE · ILLUSTRATIVE"}
-            </span>
           </div>
           <div className="project-dialog-copy">
             <span className="eyebrow">
@@ -599,7 +633,7 @@ export function ProjectShowcase({ full = false }: { full?: boolean }) {
           }
         }}
       >
-        {filtered.map((p, i) => (
+        {filtered.map((p) => (
           <button
             className="project-card"
             key={p.slug}
@@ -626,17 +660,9 @@ export function ProjectShowcase({ full = false }: { full?: boolean }) {
               <span className="project-open">
                 <ArrowUpRight size={23} />
               </span>
-              <span className="project-image-note">
-                {p.image
-                  ? p.imageNote?.startsWith("Architectural")
-                    ? "PROFILE · ARCHITECTURAL VISUALIZATION"
-                    : "2026 PROFILE · PROJECT IMAGE"
-                  : "SECTOR IMAGE · ILLUSTRATIVE"}
-              </span>
             </div>
             <div className="project-meta">
               <span>{p.category}</span>
-              <span>{String(i + 1).padStart(2, "0")}</span>
             </div>
             <RevealText as="h3">{p.title}</RevealText>
             <div className="project-card-bottom">
@@ -649,14 +675,6 @@ export function ProjectShowcase({ full = false }: { full?: boolean }) {
           </button>
         ))}
       </div>
-      {!full && (
-        <div className="container project-track-footer">
-          <span>EXPLORE THE WORK THAT SHAPES OUR WORLD</span>
-          <span>
-            DRAG OR SWIPE TO EXPLORE <ArrowRight size={14} />
-          </span>
-        </div>
-      )}
       <ProjectDialog project={selected} onClose={() => setSelected(null)} />
     </section>
   );
@@ -778,7 +796,7 @@ export function PresenceSection() {
         </SectionLabel>
         <div className="presence-layout">
           <div className="presence-copy">
-            <span className="presence-index" aria-label="17 documented regions">17<span>REGIONS. ONE SHARED AMBITION.</span></span>
+            <span className="presence-index" aria-label="17 documented regions">17<span>REGIONS</span></span>
             <RevealText as="h2">
               Many landscapes.
               <br />
@@ -871,9 +889,6 @@ export function PresenceSection() {
                 identified individually.
               </small>
             </div>
-            <span className="map-coordinates">
-              20.5937° N &nbsp; 78.9629° E
-            </span>
           </div>
         </div>
       </div>
@@ -974,7 +989,6 @@ export function StrengthsSection() {
             <br />
             <span className="muted">execution excellence.</span>
           </RevealText>
-          <span className="eyebrow">BUILT INTO EVERYTHING WE DO</span>
         </div>
         <div className="strengths-grid">
           {strengths.map((s, i) => (
@@ -1005,16 +1019,11 @@ export function EquipmentSection() {
             <span className="serif-accent">On the ground.</span>
           </RevealText>
           <div className="fleet-intro">
-            <span>OWNED CAPABILITY. ON-SITE CONFIDENCE.</span>
             <p>A capable in-house equipment bank. The right tools to turn engineering ambition into on-site progress.</p>
           </div>
         </div>
         <div className="eqb">
           <nav className="eqb-list" aria-label="Select equipment">
-            <div className="eqb-list-head">
-              <span>THE TOOLS BEHIND THE WORK</span>
-              <span>{String(count).padStart(2, "0")} TYPES</span>
-            </div>
             <ol>
               {equipment.map((item, i) => (
                 <li key={item.name}>
@@ -1039,10 +1048,8 @@ export function EquipmentSection() {
               <img className="eqb-media-fill" src={current.image} alt="" aria-hidden="true" />
               <img className="eqb-media-photo" src={current.image} alt={`${current.name}, equipment photograph from the 2026 corporate profile`} loading="lazy" />
             </div>
-            <span className="eqb-tag">R & B INFRA / EQUIPMENT BANK</span>
             <figcaption className="eqb-caption">
               <div className="eqb-caption-copy" key={current.name}>
-                <span className="eqb-eyebrow">IN FOCUS / {String(active + 1).padStart(2, "0")}</span>
                 <h3>{current.name}</h3>
                 <p>{current.description}</p>
               </div>
@@ -1281,7 +1288,6 @@ export function FinalCTA() {
       />
       <div className="final-cta-shade" />
       <div className="container">
-        <span className="eyebrow">YOUR VISION. OUR COMMITMENT.</span>
         <RevealText as="h2">
           Let’s build
           <br />

@@ -38,7 +38,6 @@ export function Stats() {
     >
       <div className="impact-topline">
         <RevealText>A legacy,<span className="serif-accent"> measured in impact.</span></RevealText>
-        <span>THREE DECADES. ONE COMMITMENT.</span>
       </div>
       <div className="impact-facts">
         {company.metrics.map((m, index) => (

@@ -42,9 +42,6 @@ for (const v of [{ name: "desktop", width: 1440, height: 900 }, { name: "mobile"
   }
   const long = await page.evaluate(() => window.__long);
   console.log(`${long <= 10 ? "PASS" : "WARN"} ${v.name} fast scroll: ${long} long frames (>34ms)`);
-  await page.getByRole("button", { name: /Go to The future/ }).click();
-  await page.waitForFunction(() => document.querySelector(".tunnel-title")?.getAttribute("aria-label")?.startsWith("PROGRESS"), null, { timeout: 8000 });
-  console.log("PASS", v.name, "chapter navigation");
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${v.name}: horizontal overflow`);
   assert.deepEqual(errors, [], `${v.name}: page errors`);
   await page.close();

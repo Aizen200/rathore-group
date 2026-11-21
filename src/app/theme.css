@@ -366,7 +366,6 @@
   box-shadow: 0 14px 34px -24px #000c;
 }
 .hdr.is-scrolled .hdr-bar { height: 64px; }
-.hdr.is-hidden { transform: translateY(-120%); }
 
 /* Scroll progress: a gold hairline along the bottom edge */
 .hdr-progress {
@@ -614,3 +613,50 @@
   .hdr, .hdr-bar, .hdr-bar-wrap, .hdr-rule, .hdr-strip, .hdr-brand img { transition: none; }
   .hdr-menu-nav a { animation: none; opacity: 1; transform: none; }
 }
+
+/* ---------- Project cards: framed panels in the site's blue/gold language ---------- */
+.project-card {
+  position: relative;
+  padding: 12px 12px 0;
+  background:
+    radial-gradient(ellipse at 85% 0%, #1d3a60 0%, transparent 60%),
+    var(--theme-blue-deep);
+  border: 1px solid #c5a55a33;
+  border-top: 2px solid var(--theme-gold);
+  border-radius: 0;
+  box-shadow: 0 18px 40px -26px #000c;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s, box-shadow 0.45s;
+}
+.project-card:hover,
+.project-card:focus-visible {
+  transform: translateY(-6px);
+  border-color: #c5a55a80;
+  border-top-color: var(--theme-gold);
+  box-shadow: 0 30px 50px -26px #000e;
+}
+.project-card:focus-visible { outline: none; }
+.project-card .project-image { border-radius: 0; }
+.project-card .project-image::after { border: 0; }
+.project-card .project-image > img { transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.project-card:hover .project-image > img { transform: scale(1.035); }
+.project-card > .project-meta,
+.project-card > h3 { padding-inline: clamp(10px, 1.4vw, 20px); }
+.project-card > .project-meta {
+  margin-top: clamp(22px, 2.2vw, 30px);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.project-card > h3 { font-size: clamp(22px, 2.2vw, 32px); line-height: 1.15; }
+.project-card > .project-card-bottom {
+  margin: clamp(20px, 2.2vw, 28px) -12px 0;
+  padding: 16px calc(12px + clamp(10px, 1.4vw, 20px)) 18px;
+  border-top: 1px solid #c5a55a33;
+}
+.project-card-bottom > strong {
+  font-family: var(--font-heading);
+  font-size: clamp(16px, 1.4vw, 20px);
+  letter-spacing: -0.02em;
+}
+.project-status, .project-open { border-radius: 0; }
+.project-track { padding-top: 10px; padding-bottom: 28px; }

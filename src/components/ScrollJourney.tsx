@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { ArrowDown, ArrowUpRight, ArrowRight } from "lucide-react";
+import { ArrowUpRight, ArrowRight } from "lucide-react";
 import heroVideo from "@/data/hero-video.json";
 import RoadLayers from "./RoadLayers";
 import TunnelHero from "./TunnelHero";
@@ -351,7 +351,6 @@ export default function ScrollJourney() {
     };
   }, []);
 
-  const current = chapters[chapter];
   return (
     <section
       id="home"
@@ -398,12 +397,6 @@ export default function ScrollJourney() {
             {loadState === "error" && <button onClick={() => retry.current()}>Retry</button>}
           </div>
         )}
-        <div className="journey-topline">
-          <span>R & B INFRA PROJECT LIMITED</span>
-          <span>
-            MUMBAI HEADQUARTERS <i />
-          </span>
-        </div>
         {HERO_MODE === "film" && chapters.map((c, i) => {
           const Title = i === 0 ? "h1" : "h2";
           const active = chapter === i;
@@ -472,45 +465,6 @@ export default function ScrollJourney() {
             </div>
           );
         })}
-        <nav className="journey-chapters" aria-label="Journey chapters">
-          {chapters.map((c, i) => (
-            <button
-              key={c.label}
-              className={chapter === i ? "active" : ""}
-              aria-label={`${String(i + 1).padStart(2, "0")} — Go to ${c.label}`}
-              aria-current={chapter === i ? "step" : undefined}
-              onClick={() => jump.current(stops[i])}
-            >
-              <span>{String(i + 1).padStart(2, "0")}</span>
-              <i />
-              <span className="journey-chapter-name">{c.label}</span>
-            </button>
-          ))}
-        </nav>
-        <div className="journey-bottom">
-          {chapter === chapters.length - 1 ? (
-            <a
-              className="journey-scroll"
-              href="#at-a-glance"
-              aria-label="Continue to company overview"
-            >
-              <span><ArrowDown size={17} /></span>
-              THE JOURNEY CONTINUES
-            </a>
-          ) : (
-            <button
-              className="journey-scroll"
-              onClick={() => jump.current(stops[chapter + 1])}
-            >
-              <span><ArrowDown size={17} /></span>
-              SCROLL TO EXPLORE
-            </button>
-          )}
-          <span className="journey-current">{current.label}</span>
-          <span className="journey-visual-note">
-            {HERO_MODE === "layers" ? "TYPICAL FLEXIBLE PAVEMENT · ILLUSTRATIVE" : "ILLUSTRATIVE INFRASTRUCTURE FOOTAGE"}
-          </span>
-        </div>
         <div className="journey-progress">
           <span />
         </div>

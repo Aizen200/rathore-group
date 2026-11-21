@@ -50,14 +50,14 @@ export default function Motion() {
         ".project-meta", ".project-card-bottom", ".leader-role", ".capability-tabs > button",
         ".expertise-tab", ".expertise-detail-top", ".expertise-detail > ul", ".expertise-link",
         ".fleet-index > button", ".fleet-eyebrow",
-        ".about-image", ".project-image", ".capability-visual", ".leader-portrait", ".equipment-photo", ".expertise-photo", ".fleet-photo",
+        ".about-image", ".story-photo", ".story-legacy", ".project-image", ".capability-visual", ".leader-portrait", ".equipment-photo", ".expertise-photo", ".fleet-photo",
       ];
       document.querySelectorAll<HTMLElement>(selectors.join(",")).forEach((element) => {
         if (registered.has(element) || element.closest("dialog, .scroll-journey")) return;
         registered.add(element);
         revealTargets.add(element);
         if (!element.classList.contains("text-reveal")) {
-          element.classList.add(element.matches(".about-image, .project-image, .capability-visual, .leader-portrait, .equipment-photo, .expertise-photo, .fleet-photo") ? "media-reveal" : "motion-block");
+          element.classList.add(element.matches(".about-image, .story-photo, .project-image, .capability-visual, .leader-portrait, .equipment-photo, .expertise-photo, .fleet-photo") ? "media-reveal" : "motion-block");
           const siblings = element.parentElement ? [...element.parentElement.children] : [];
           element.style.setProperty("--reveal-delay", `${Math.min(siblings.indexOf(element), 4) * 65}ms`);
         }
