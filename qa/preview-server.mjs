@@ -14,6 +14,7 @@ const types = {
   ".png": "image/png",
   ".jpg": "image/jpeg",
   ".webp": "image/webp",
+  ".mp4": "video/mp4",
   ".woff2": "font/woff2",
 };
 http
@@ -45,6 +46,17 @@ http
       ) {
         body = gzipSync(body);
         headers["Content-Encoding"] = "gzip";
+      }
+      headers["Accept-Ranges"] = "bytes";
+      // Byte ranges (like real static hosting) so the hero video can seek.
+      const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || "");
+      if (range && !headers["Content-Encoding"]) {
+        const start = range[1] ? Number(range[1]) : body.length - Number(range[2]);
+        const end = range[1] && range[2] ? Math.min(Number(range[2]), body.length - 1) : body.length - 1;
+        headers["Content-Range"] = `bytes ${start}-${end}/${body.length}`;
+        headers["Content-Length"] = end - start + 1;
+        res.writeHead(206, headers).end(body.subarray(start, end + 1));
+        return;
       }
       headers["Content-Length"] = body.length;
       res.writeHead(200, headers).end(body);

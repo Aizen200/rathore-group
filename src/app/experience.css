@@ -417,14 +417,7 @@ h2 { font-size: clamp(48px, 6vw, 90px); font-weight: 500; letter-spacing: -.065e
 
 
 .project-dialog-copy h2 { font-size: clamp(27px, 3vw, 43px); color: #19293d; }
-.journey-copy h1 > span { animation: hero-line-enter .9s var(--ease-out) both; }
-.journey-copy h1 > span:last-child { animation-delay: .12s; }
-.journey-copy .journey-description { animation: detail-enter .85s var(--ease-out) .2s both; }
-.motion-enabled .scroll-journey:not(.is-in-view) .journey-copy h1 > span,
-.motion-enabled .scroll-journey:not(.is-in-view) .journey-copy .journey-description { animation: none; }
-@keyframes hero-line-enter { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
 @media (max-width: 600px) { .projects-section > .container h2 { font-size: clamp(48px, 14vw, 61px); } }
-@media (prefers-reduced-motion: reduce) { .journey-copy h1 > span, .journey-copy .journey-description { animation: none; } }
 
 .text-reveal { word-spacing: .035em; }
 .stats-section .stat { border: 0 !important; padding: 0 !important; }

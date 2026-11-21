@@ -1,0 +1,158 @@
+/* Road cross-section hero (RoadLayers.tsx). ScrollJourney sets --l0 … --l4 on .scroll-journey,
+   each 0 → 1 across one construction stage. Only opacity and transform change, on separate
+   <svg> boxes, so scrolling never repaints the drawing. */
+
+.road-layers {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 70% at 50% 100%, #12263d 0%, #0c192b 55%, #08111e 100%);
+}
+/* Blueprint grid: strong at the start (the vision), receding as the real road appears. */
+.rl-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(#c5a55a14 1px, transparent 1px),
+    linear-gradient(90deg, #c5a55a14 1px, transparent 1px),
+    linear-gradient(#c5a55a08 1px, transparent 1px),
+    linear-gradient(90deg, #c5a55a08 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+  background-position: center bottom;
+  opacity: calc(1 - var(--l3, 0) * 0.65);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 35%, #000 100%);
+}
+/* Dusk glow over the finished highway. */
+.rl-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 45% at 50% 78%, #c5a55a38 0%, #c5a55a10 45%, transparent 75%);
+  opacity: var(--l4, 0);
+  will-change: opacity;
+}
+
+/* Scene box keeps the drawing's 1600:600 shape and covers the width, anchored to the bottom.
+   Every layer fills it exactly, so the layers line up at any screen size. */
+.rl-scene {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: max(100vw, 120svh);
+  aspect-ratio: 1600 / 600;
+  transform: translateX(-50%);
+}
+.rl-layer,
+.rl-paver-track,
+.rl-traffic {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.rl-layer { display: block; }
+.rl-label-name {
+  font: 600 16px/1 var(--font-sans, system-ui), sans-serif;
+  letter-spacing: 2.4px;
+  fill: #f0eee7;
+  paint-order: stroke;
+  stroke: #0c192b66;
+  stroke-width: 3px;
+}
+.rl-label-spec {
+  font-weight: 500;
+  fill: #ead08a;
+}
+.rl-dim {
+  font: 500 15px/1 var(--font-sans, system-ui), sans-serif;
+  letter-spacing: 3px;
+  fill: #c5a55a;
+}
+
+/* Stage 0: blueprint fades back once asphalt goes down. */
+.rl-blueprint { opacity: calc(1 - var(--l3, 0) * 0.9); will-change: opacity; }
+
+/* Stage 1: subgrade rises from below. */
+.rl-subgrade {
+  opacity: var(--l0, 0);
+  transform: translate3d(0, calc((1 - var(--l0, 0)) * 9%), 0);
+  will-change: transform, opacity;
+}
+/* Stage 2: aggregate layers settle down from above, like material being placed. */
+.rl-gsb {
+  opacity: var(--l1, 0);
+  transform: translate3d(0, calc((1 - var(--l1, 0)) * -12%), 0);
+  will-change: transform, opacity;
+}
+.rl-wmm {
+  opacity: var(--l2, 0);
+  transform: translate3d(0, calc((1 - var(--l2, 0)) * -12%), 0);
+  will-change: transform, opacity;
+}
+/* Stage 3: asphalt unrolls from the left road edge (x 255 of 1600) behind the paver. */
+.rl-asphalt {
+  transform: scaleX(var(--l3, 0));
+  transform-origin: 15.94% 50%;
+  will-change: transform;
+}
+.rl-asphalt-label {
+  opacity: clamp(0, var(--l3, 0) * 8 - 7, 1);
+  will-change: opacity;
+}
+.rl-paver-track {
+  /* Road runs x 255 → 1345: 68.1% of the scene width. */
+  transform: translate3d(calc(var(--l3, 0) * 68.1%), 0, 0);
+  opacity: clamp(0, min(var(--l3, 0) * 25, (1 - var(--l3, 0)) * 12), 1);
+  will-change: transform, opacity;
+}
+/* Stage 4: finishing, lights rise from the road, beams and traffic fade in. */
+.rl-finish {
+  opacity: var(--l4, 0);
+  will-change: opacity;
+}
+.rl-lights {
+  transform: scaleY(var(--l4, 0));
+  transform-origin: 50% 56%;
+  will-change: transform;
+}
+.rl-beams {
+  opacity: clamp(0, var(--l4, 0) * 2 - 1, 1);
+  will-change: opacity;
+}
+.rl-traffic {
+  /* Keep cars on the carriageway (x 272 → 1328). */
+  clip-path: inset(0 17% 0 17%);
+  opacity: clamp(0, var(--l4, 0) * 2 - 1, 1);
+  will-change: opacity;
+}
+.rl-cars-east { animation: rl-drive-east 7s linear infinite; }
+.rl-cars-west { animation: rl-drive-west 9.5s linear infinite; opacity: 0.62; }
+@keyframes rl-drive-east {
+  from { transform: translate3d(8%, 0, 0); }
+  to { transform: translate3d(116%, 0, 0); }
+}
+@keyframes rl-drive-west {
+  from { transform: translate3d(84%, 0, 0); }
+  to { transform: translate3d(10%, 0, 0); }
+}
+
+/* Copy sits above the road in this hero, at a size that leaves room for the drawing. */
+.scroll-journey--layers .journey-shade {
+  background: linear-gradient(180deg, #06131b8c, transparent 30%);
+}
+.scroll-journey--layers .journey-copy { bottom: max(46%, 330px); }
+.scroll-journey--layers .journey-copy .journey-title { font-size: clamp(46px, 5.4vw, 94px); }
+.scroll-journey--layers .journey-description { margin-top: 22px; }
+
+@media (max-width: 700px) {
+  .rl-scene { width: max(100vw, 140svh); }
+  .scroll-journey--layers .journey-copy { bottom: max(40%, 320px); }
+  .scroll-journey--layers .journey-copy .journey-title { font-size: clamp(36px, 10.5vw, 52px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rl-cars-east,
+  .rl-cars-west { animation: none; transform: translate3d(40%, 0, 0); }
+}

@@ -1,0 +1,278 @@
+/* Tunnel hero (TunnelHero.tsx): a wireframe tunnel in real CSS 3D with video cards flying out of
+   its depth. JS only sets translateZ / opacity, so the compositor does all the motion. */
+
+@font-face {
+  font-family: "Big Shoulders Display";
+  src: url("/fonts/big-shoulders-display-800-latin.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+.scroll-journey--tunnel {
+  --tunnel-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --tunnel-line: #f0eee738;
+  --tunnel-gold: #c5a55a;
+  height: 480svh;
+  min-height: 3200px;
+}
+.scroll-journey--tunnel .journey-sticky { background: #070d17; }
+.scroll-journey--tunnel .journey-topline { display: none; }
+.scroll-journey--tunnel .journey-shade {
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% 46%, transparent 55%, #04080fd9 100%),
+    linear-gradient(0deg, #04080fcc 0%, transparent 32%);
+}
+
+/* ---- 3D stage ---- */
+.tunnel-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  perspective: 1000px;
+  perspective-origin: 50% 46%;
+}
+.tunnel-world,
+.tunnel-rings {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+.tunnel-rings { will-change: transform; }
+.tunnel-ring,
+.tunnel-gate {
+  position: absolute;
+  left: 4vw;
+  top: 6svh;
+  width: 92vw;
+  height: 80svh;
+  border: 1px solid var(--tunnel-line);
+  backface-visibility: hidden;
+}
+.tunnel-gate {
+  border-color: #c5a55a8c;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+/* Floor, ceiling and walls: long planes folded into the depth, ruled with lines that converge on
+   the vanishing point. Depth = 20 rings × 300px. */
+.tunnel-floor,
+.tunnel-ceiling {
+  position: absolute;
+  left: 4vw;
+  width: 92vw;
+  height: 6000px;
+  transform-origin: 50% 0;
+  transform: rotateX(-90deg);
+  background: repeating-linear-gradient(90deg, var(--tunnel-line) 0 1px, transparent 1px calc(92vw / 8));
+  mask-image: linear-gradient(180deg, #000 0%, #000 30%, transparent 85%);
+}
+.tunnel-floor { top: 86svh; }
+.tunnel-ceiling { top: 6svh; }
+.tunnel-wall {
+  position: absolute;
+  top: 6svh;
+  width: 6000px;
+  height: 80svh;
+  background: repeating-linear-gradient(0deg, var(--tunnel-line) 0 1px, transparent 1px calc(80svh / 4));
+}
+.tunnel-wall-left {
+  left: 4vw;
+  transform-origin: 0 50%;
+  transform: rotateY(90deg);
+  mask-image: linear-gradient(90deg, #000 0%, #000 30%, transparent 85%);
+}
+.tunnel-wall-right {
+  left: calc(96vw - 6000px);
+  transform-origin: 100% 50%;
+  transform: rotateY(-90deg);
+  mask-image: linear-gradient(270deg, #000 0%, #000 30%, transparent 85%);
+}
+
+/* ---- Video cards ---- */
+.tunnel-card {
+  --card-w: 52vw;
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: var(--card-w);
+  aspect-ratio: 16 / 9;
+  margin-left: calc(var(--card-w) / -2);
+  margin-top: calc(var(--card-w) * -9 / 32);
+  border: 1.5px solid #c5a55acc;
+  background: #05090f;
+  overflow: hidden;
+  opacity: 0;
+  backface-visibility: hidden;
+  box-shadow: 0 30px 80px #000a;
+  will-change: transform, opacity;
+}
+.tunnel-card video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.82) contrast(1.06);
+}
+/* Scan lines and a soft vignette give the footage its monitor-feed texture. */
+.tunnel-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(0deg, #ffffff0a 0 1px, transparent 1px 3px),
+    radial-gradient(120% 120% at 50% 50%, transparent 55%, #00000080 100%);
+}
+
+/* ---- Copy ---- */
+.tunnel-label {
+  position: absolute;
+  top: 124px;
+  left: 6%;
+  z-index: 2;
+  font: 500 11px/1 var(--tunnel-mono);
+  letter-spacing: 0.32em;
+  color: #e9e6dd;
+}
+.tunnel-label span { color: var(--tunnel-gold); margin-right: 14px; }
+.tunnel-label em { font-style: normal; color: #8b939b; margin-left: 14px; }
+
+.tunnel-copy {
+  position: absolute;
+  bottom: 13svh;
+  z-index: 2;
+  max-width: min(62vw, 1000px);
+  display: flex;
+  flex-direction: column;
+}
+.tunnel-copy-right { right: 6%; align-items: flex-end; text-align: right; }
+.tunnel-copy-left { left: 6%; align-items: flex-start; text-align: left; }
+.tunnel-number {
+  font: 800 clamp(84px, 10.5vw, 176px)/0.8 "Big Shoulders Display", var(--font-heading);
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--tunnel-gold);
+  letter-spacing: 0.01em;
+  margin-bottom: 10px;
+}
+.tunnel-title {
+  font: 800 clamp(46px, 6.2vw, 108px)/0.9 "Big Shoulders Display", var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+  color: #f0eee7;
+  margin: 0;
+}
+.tunnel-title > span { display: block; white-space: nowrap; }
+.tunnel-title > span:last-child { color: var(--tunnel-gold); }
+.tunnel-meta {
+  margin-top: 20px;
+  font: 500 11px/1.7 var(--tunnel-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #b9bfc4;
+  max-width: 640px;
+}
+.tunnel-meta span { color: var(--tunnel-gold); margin: 0 14px; }
+.tunnel-link {
+  margin-top: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: 500 11px/1 var(--tunnel-mono);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--tunnel-gold);
+  padding-bottom: 6px;
+  border-bottom: 1px solid #c5a55a66;
+}
+.tunnel-link:hover { color: #f0eee7; border-color: #f0eee7; }
+
+@media (max-width: 700px) {
+  .scroll-journey--tunnel { height: 420svh; min-height: 2600px; }
+  .tunnel-stage { perspective: 800px; perspective-origin: 50% 40%; }
+  .tunnel-ring,
+  .tunnel-gate { top: 10svh; height: 70svh; }
+  .tunnel-ceiling { top: 10svh; }
+  .tunnel-floor { top: 80svh; }
+  .tunnel-wall { top: 10svh; height: 70svh; }
+  .tunnel-card { --card-w: 118vw; top: 36%; }
+  .tunnel-label { top: 96px; font-size: 9px; }
+  .tunnel-copy,
+  .tunnel-copy-left,
+  .tunnel-copy-right { left: 6%; right: 6%; bottom: 15svh; max-width: none; align-items: flex-start; text-align: left; }
+  .tunnel-number { font-size: 76px; }
+  .tunnel-title { font-size: clamp(38px, 11vw, 54px); }
+  .tunnel-title > span { white-space: normal; }
+  .tunnel-meta { font-size: 9px; }
+}
+
+/* ---- Film hero with "mission file" titles (HERO_MODE = "film") ----
+   Full-screen scroll-scrubbed video; each chapter's copy is a big outlined number, a condensed
+   title that decodes from scrambled letters, and a monospace detail line, alternating sides.
+   ScrollJourney's placeCopy still fades/drifts it with the footage's downward motion. */
+.scroll-journey--files {
+  --files-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+}
+.scroll-journey--files .journey-shade {
+  background:
+    linear-gradient(0deg, #050b14e6 0%, #050b1499 22%, transparent 50%),
+    linear-gradient(180deg, #050b148c 0%, transparent 22%);
+}
+.scroll-journey--files .journey-copy.journey-files {
+  bottom: 12svh;
+  max-width: min(64vw, 1050px);
+  display: flex;
+  flex-direction: column;
+}
+.scroll-journey--files .journey-copy.journey-files-left { left: 6%; right: auto; align-items: flex-start; text-align: left; }
+.scroll-journey--files .journey-copy.journey-files-right { left: auto; right: 6%; align-items: flex-end; text-align: right; }
+.journey-files-number {
+  font: 800 clamp(84px, 10.5vw, 176px)/0.8 "Big Shoulders Display", var(--font-heading);
+  color: transparent;
+  -webkit-text-stroke: 1.5px #c5a55a;
+  letter-spacing: 0.01em;
+  margin-bottom: 10px;
+}
+.scroll-journey--files .journey-copy .journey-title {
+  font: 800 clamp(48px, 6.4vw, 112px)/0.9 "Big Shoulders Display", var(--font-heading);
+  letter-spacing: 0.005em;
+  word-spacing: normal;
+  text-transform: uppercase;
+  text-wrap: nowrap;
+  color: #f0eee7;
+  margin: 0;
+}
+.scroll-journey--files .journey-copy .journey-title > span { display: block; white-space: nowrap; }
+.scroll-journey--files .journey-copy .journey-title > span:last-child { color: #c5a55a; }
+.journey-files-link {
+  margin-top: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: 500 11px/1 var(--files-mono);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #c5a55a;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #c5a55a66;
+}
+.journey-files-link:hover { color: #f0eee7; border-color: #f0eee7; }
+
+@media (max-width: 700px) {
+  .scroll-journey--files .journey-copy.journey-files,
+  .scroll-journey--files .journey-copy.journey-files-left,
+  .scroll-journey--files .journey-copy.journey-files-right {
+    left: 6%;
+    right: 6%;
+    bottom: 15svh;
+    max-width: none;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .journey-files-number { font-size: 76px; }
+  .scroll-journey--files .journey-copy .journey-title { font-size: clamp(38px, 11vw, 54px); text-wrap: wrap; }
+  .scroll-journey--files .journey-copy .journey-title > span { white-space: normal; }
+}

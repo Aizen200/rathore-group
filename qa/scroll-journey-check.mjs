@@ -6,8 +6,8 @@ const browser = await chromium.launch({ channel: "chrome", headless: true });
 const errors = [];
 const failures = [];
 for (const variant of [
-  { name: "desktop", width: 1440, height: 1000, count: 180 },
-  { name: "mobile", width: 390, height: 844, count: 120 },
+  { name: "desktop", width: 1440, height: 1000, count: 240 },
+  { name: "mobile", width: 390, height: 844, count: 240 },
 ]) {
   const page = await browser.newPage({
     viewport: { width: variant.width, height: variant.height },
@@ -36,7 +36,10 @@ for (const variant of [
         behavior: "instant",
       });
     }, p);
-    const expected = Math.round(p * (variant.count - 1));
+    // Expect the frame for where the page actually landed (layout can shift it by a few pixels).
+    await page.waitForTimeout(250);
+    const landed = await page.evaluate(() => { const el = document.querySelector(".scroll-journey"); return Math.max(0, Math.min(1, -el.getBoundingClientRect().top / (el.offsetHeight - innerHeight))); });
+    const expected = Math.round(landed * (variant.count - 1));
     await page.waitForFunction(
       (expected) =>
         Number(document.querySelector(".journey-canvas")?.dataset.frame) ===
@@ -45,10 +48,14 @@ for (const variant of [
       { timeout: 15000 },
     );
     const sample = await page.evaluate(() => {
-      const c = document.querySelector(".journey-canvas");
-      const data = c
-        .getContext("2d")
-        .getImageData(0, 0, c.width, c.height).data;
+      // The hero is a <video>: copy its current frame to a canvas to sample it.
+      const v = document.querySelector(".journey-canvas");
+      const c = document.createElement("canvas");
+      c.width = 320;
+      c.height = 180;
+      const g = c.getContext("2d");
+      g.drawImage(v, 0, 0, c.width, c.height);
+      const data = g.getImageData(0, 0, c.width, c.height).data;
       const pixels = [];
       let hash = 0;
       for (let i = 0; i < data.length; i += 7919) {

@@ -1,7 +1,7 @@
-import { spawn } from "node:child_process";
+// Hero pipeline for a new source video. Usage: node qa/sequence/render.mjs /absolute/path/to/video.mp4
+// (ffmpeg on PATH or FFMPEG=…). See encode-video.mjs: all-keyframe scrub videos, no audio.
+import { spawnSync } from "node:child_process";
 const source = process.argv[2];
-if (!source) throw Error("Usage: node qa/sequence/render.mjs /absolute/path/to/highway.mp4");
-// ffmpeg decodes the real flight; Pillow encodes the optimized WebP frames.
-const child = spawn("python3", ["qa/sequence/extract.py", source], { stdio: "inherit" });
-child.on("error", error => { throw error; });
-child.on("close", code => { process.exitCode = code ?? 1; });
+if (!source) throw Error("Usage: node qa/sequence/render.mjs /absolute/path/to/video.mp4");
+const { status } = spawnSync(process.execPath, ["qa/sequence/encode-video.mjs", source], { stdio: "inherit" });
+process.exitCode = status ?? 1;

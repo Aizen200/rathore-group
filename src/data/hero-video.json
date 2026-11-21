@@ -1,0 +1,17 @@
+{
+  "fps": 24,
+  "frames": 240,
+  "version": "fb88fad52fee",
+  "desktop": {
+    "src": "/film-video/desktop.mp4",
+    "poster": "/film-video/poster-desktop.webp",
+    "width": 1920,
+    "height": 1080
+  },
+  "mobile": {
+    "src": "/film-video/mobile.mp4",
+    "poster": "/film-video/poster-mobile.webp",
+    "width": 1080,
+    "height": 1920
+  }
+}

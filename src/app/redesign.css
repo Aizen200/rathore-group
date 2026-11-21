@@ -153,6 +153,8 @@ h2 {
 .journey-canvas {
   z-index: -3;
   opacity: 0;
+  object-fit: cover;
+  pointer-events: none;
 }
 .journey-shade {
   position: absolute;
@@ -214,6 +216,33 @@ h2 {
   right: 8%;
   bottom: 22%;
   max-width: 1370px;
+  /* Scroll-linked: ScrollJourney sets opacity, --copy-enter (1 before the chapter → 0 → -1 after)
+     and --copy-drift (-0.5 → 0.5 across the chapter). Without JS only the active chapter shows.
+     The footage is a forward camera move: road, trucks and cars flow down and outward, growing as
+     they approach. The copy travels the same way (it arrives from the horizon slightly smaller,
+     drifts down while on screen, and leaves downward slightly larger) so it rides with the
+     scene instead of fighting it. */
+  --copy-y: calc(var(--copy-drift, 0) - var(--copy-enter, 0));
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(calc(1 + var(--copy-y) * 0.045));
+  transform-origin: 50% 0%;
+  will-change: opacity, transform;
+}
+.journey-copy.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+/* Lower lines move further, as nearer ground does in the footage. */
+.journey-copy > * {
+  --copy-depth: 1;
+  transform: translate3d(0, calc(var(--copy-y) * 38px * var(--copy-depth)), 0);
+  will-change: transform;
+}
+.journey-copy > .journey-eyebrow { --copy-depth: 0.55; }
+.journey-copy > .journey-description { --copy-depth: 1.5; }
+.journey-copy .journey-title > span:last-child {
+  transform: translate3d(0, calc(var(--copy-y) * 12px), 0);
 }
 .journey-eyebrow {
   display: flex;
@@ -229,7 +258,7 @@ h2 {
   height: 1px;
   background: #c5a55a;
 }
-.journey-copy h1 {
+.journey-copy .journey-title {
   font-size: clamp(64px, 7.9vw, 132px);
   font-weight: 600;
   line-height: 0.98;
@@ -237,10 +266,10 @@ h2 {
   word-spacing: 0.045em;
   text-wrap: balance;
 }
-.journey-copy h1 > span {
+.journey-copy .journey-title > span {
   display: block;
 }
-.journey-copy h1 > span:last-child {
+.journey-copy .journey-title > span:last-child {
   color: #c5a55a;
 }
 .journey-description {
@@ -281,7 +310,7 @@ h2 {
   padding-left: 45px;
   background: radial-gradient(ellipse at center, #071722b3, transparent 75%);
 }
-.journey-copy-end h1 {
+.journey-copy-end .journey-title {
   font-size: clamp(65px, 8vw, 120px);
 }
 .journey-copy-end .journey-description {
@@ -294,7 +323,7 @@ h2 {
   text-align: center;
   bottom: 26%;
 }
-.journey-copy-center h1 {
+.journey-copy-center .journey-title {
   font-size: clamp(56px, 6vw, 98px);
   line-height: 1.04;
 }
@@ -1029,7 +1058,7 @@ h2 {
   .journey-copy {
     left: max(6%, calc((100vw - 1570px) / 2));
   }
-  .journey-copy h1 {
+  .journey-copy .journey-title {
     font-size: 145px;
   }
   .journey-copy-end {
@@ -1038,7 +1067,7 @@ h2 {
   .journey-copy-center {
     left: 8%;
   }
-  .journey-copy-center h1 {
+  .journey-copy-center .journey-title {
     font-size: 110px;
   }
   .project-track .project-card {
@@ -1046,7 +1075,7 @@ h2 {
   }
 }
 @media (max-width: 1150px) {
-  .journey-copy h1 {
+  .journey-copy .journey-title {
     font-size: 8.5vw;
   }
   .journey-copy {
@@ -1140,7 +1169,7 @@ h2 {
   .journey-copy {
     bottom: 25%;
   }
-  .journey-copy h1 {
+  .journey-copy .journey-title {
     font-size: 8.7vw;
     line-height: 1.03;
   }
@@ -1151,7 +1180,7 @@ h2 {
     bottom: 24%;
     text-align: left;
   }
-  .journey-copy-center h1 {
+  .journey-copy-center .journey-title {
     font-size: 7.5vw;
   }
   .journey-description p {
@@ -1376,12 +1405,12 @@ h2 {
     bottom: 25%;
     max-width: none;
   }
-  .journey-copy h1 {
+  .journey-copy .journey-title {
     font-size: clamp(40px, 8.6vw, 65px);
     line-height: 1.04;
     letter-spacing: -0.06em;
   }
-  .journey-copy h1 > span:last-child {
+  .journey-copy .journey-title > span:last-child {
     max-width: 98%;
   }
   .journey-eyebrow {
@@ -1416,7 +1445,7 @@ h2 {
     background: none;
     padding-left: 0;
   }
-  .journey-copy-end h1 {
+  .journey-copy-end .journey-title {
     font-size: clamp(48px, 11.8vw, 80px);
   }
   .journey-copy-center {
@@ -1425,7 +1454,7 @@ h2 {
     bottom: 26%;
     text-align: left;
   }
-  .journey-copy-center h1 {
+  .journey-copy-center .journey-title {
     font-size: clamp(31px, 7vw, 49px);
     line-height: 1.14;
   }

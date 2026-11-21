@@ -1,26 +1,23 @@
 {
   "kind": "AI-generated road construction video",
-  "title": "hero section part 2",
+  "title": "hero section 3",
   "provider": "Supplied by the site owner (AI-generated)",
-  "originalFile": "hero section part 2.mp4",
+  "originalFile": "hero section 3.mp4",
   "originalDimensions": [
     1920,
     1080
   ],
   "durationSeconds": 10,
-  "audio": "Not used: the hero plays extracted still frames, so no audio is shipped.",
+  "audio": "None: the audio track is removed at encoding (-an); the hero video is muted and has no sound.",
   "usage": "Illustrative cinematic homepage background; does not depict a Rathore Group project.",
   "extraction": {
-    "method": "Decoded in Chrome (Playwright) and encoded with sharp; no intermediate lossy step",
-    "startSeconds": 0,
-    "durationSeconds": 9.97,
-    "desktopFrames": 180,
-    "mobileFrames": 120,
-    "mobileCrop": "centre 9:16 crop of the 1080p frame, scaled to 1080×1920",
-    "retinaFrames": 0,
-    "qhdFrames": 0,
-    "note": "Source is 1080p, so the 1440p/4K tiers are omitted rather than upscaled. Desktop frames at q68 (detailed footage: ~36 MB).",
-    "webpQuality": 68,
-    "cutDissolves": "Hard scene cuts eased into cross-dissolves (qa/sequence/dissolve-cuts.mjs): desktop frames 42/72/108/143 over 12 frames, mobile 28/48/72/96 over 8."
-  }
+    "method": "qa/sequence/encode-video.mjs: H.264 with every frame a keyframe (-g 1, no B-frames) so scroll seeking is instant; audio removed",
+    "frames": 240,
+    "fps": 24,
+    "desktop": "1920×1080, CRF 22",
+    "mobile": "centre 9:16 crop, 1080×1920, CRF 25",
+    "posters": "first frame as WebP for each"
+  },
+  "sourceFrameRate": 24,
+  "sourceFrames": 240
 }
