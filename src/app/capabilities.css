@@ -11,7 +11,7 @@
   --xp-radius: clamp(20px, 2vw, 32px);
   background: var(--theme-white, #fff);
   color: var(--xp-ink);
-  padding-block: clamp(80px, 8vw, 128px);
+  padding-block: var(--section-pad);
 }
 .expertise-section .section-label { margin-bottom: 46px; color: #47576b; }
 

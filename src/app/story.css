@@ -48,6 +48,9 @@
   letter-spacing: -.06em;
   color: var(--theme-ink, #0f2440);
 }
+/* Optical alignment: "T" has almost no left side-bearing, while the round "e" starting the next
+   lines does, so "Three" sat ~0.03em left of them. Nudge it so all lines share one left edge. */
+.story-title h2 > .reveal-word:first-child { margin-left: 0.032em; }
 .story-gold {
   color: var(--theme-gold, #c5a55a);
   position: relative;

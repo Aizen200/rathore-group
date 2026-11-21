@@ -1,9 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import india from "@/data/india.json";
-const IndiaMapScene = dynamic(() => import("./IndiaMapScene"), { ssr: false });
+import PresenceMap from "./PresenceMap";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -683,104 +681,70 @@ export function ProjectShowcase({ full = false }: { full?: boolean }) {
 const regions = [
   {
     name: "Maharashtra",
-    x: 27,
-    y: 51,
     caption: "Our home. A foundation for nationwide delivery.",
   },
   {
     name: "Rajasthan",
-    x: 22,
-    y: 30,
     caption: "Healthcare, sewerage and institutional infrastructure.",
   },
   {
     name: "Jammu & Kashmir",
-    x: 26,
-    y: 10,
     caption: "Road construction and highway connectivity.",
   },
   {
     name: "Ladakh",
-    x: 37,
-    y: 8,
     caption: "High-altitude roads connecting remote communities.",
   },
   {
     name: "Madhya Pradesh",
-    x: 36,
-    y: 40,
     caption: "Urban sanitation and sewage infrastructure.",
   },
   {
     name: "Uttar Pradesh",
-    x: 43,
-    y: 29,
     caption: "Renewable energy and public lighting systems.",
   },
   {
     name: "Odisha",
-    x: 56,
-    y: 48,
     caption: "Technology systems for public infrastructure.",
   },
   {
     name: "Arunachal Pradesh",
-    x: 86,
-    y: 25,
     caption: "Road infrastructure across challenging terrain.",
   },
   {
     name: "Himachal Pradesh",
-    x: 31,
-    y: 17,
     caption: "Regional presence documented in the 2026 corporate profile.",
   },
   {
     name: "Uttarakhand",
-    x: 37,
-    y: 20,
     caption: "Regional presence documented in the 2026 corporate profile.",
   },
   {
     name: "Haryana",
-    x: 27,
-    y: 23,
     caption: "Regional presence documented in the 2026 corporate profile.",
   },
   {
     name: "Bihar",
-    x: 57,
-    y: 35,
     caption: "Regional presence documented in the 2026 corporate profile.",
   },
   {
     name: "Assam",
-    x: 81,
-    y: 31,
     caption: "Regional presence documented in the 2026 corporate profile.",
   },
   {
     name: "Nagaland",
-    x: 87,
-    y: 31,
     caption: "Regional presence documented in the 2026 corporate profile.",
   },
   {
     name: "Gujarat",
-    x: 12,
-    y: 43,
     caption: "Regional presence documented in the 2026 corporate profile.",
   },
   {
     name: "Daman",
-    x: 17,
-    y: 48,
     caption: "Regional presence documented in the 2026 corporate profile.",
   },
   {
     name: "Karnataka",
-    x: 26,
-    y: 63,
     caption: "Regional presence documented in the 2026 corporate profile.",
   },
 ];
@@ -788,174 +752,130 @@ export function PresenceSection() {
   const [active, setActive] = useState(0);
   const region = regions[active];
   const list = projects.filter((p) => p.state === region.name);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const countFor = (name: string) =>
+    projects.filter((p) => p.state === name).length;
+  const documented = projects.filter((p) =>
+    regions.some((r) => r.name === p.state),
+  ).length;
   return (
-    <section className="presence-section section-pad" id="presence">
+    <section
+      className="presence-section prs section-pad"
+      id="presence"
+      aria-labelledby="presence-heading"
+    >
       <div className="container">
-        <SectionLabel number="04 / A NATIONAL FOOTPRINT">
-          ROOTED IN MUMBAI. BUILDING ACROSS INDIA.
-        </SectionLabel>
-        <div className="presence-layout">
-          <div className="presence-copy">
-            <span className="presence-index" aria-label="17 documented regions">17<span>REGIONS</span></span>
-            <RevealText as="h2">
-              Many landscapes.
-              <br />
-              <span className="muted">One purpose.</span>
-            </RevealText>
+        <div className="prs-head">
+          <RevealText as="h2" id="presence-heading">
+            Many landscapes.
+            <br />
+            <span className="serif-accent">One purpose.</span>
+          </RevealText>
+          <div className="prs-intro">
             <p>
               From growing cities to demanding terrain, we bring engineering
               expertise where it matters.
             </p>
-            <div
-              className="region-selector"
-              aria-label="Explore project regions"
-            >
-              {regions.map((r, i) => (
-                <button
-                  key={r.name}
-                  className={i === active ? "active" : ""}
-                  onClick={() => setActive(i)}
-                >
-                  {r.name}
-                  <ArrowUpRight size={14} />
-                </button>
-              ))}
-            </div>
-            <div className="region-detail" aria-live="polite" key={region.name}>
-              <span className="eyebrow">
-                <MapPin size={13} />
-                {region.name}
-              </span>
-              <RevealText as="h3">{region.caption}</RevealText>
-              {list.length === 0 && (
-                <p className="profile-presence-note">
-                  The corporate profile records our presence in this region.
-                  Contact our team for individual project details.
-                </p>
-              )}
-              {list.map((p) => (
-                <Link key={p.slug} href={`/projects/${p.slug}/`}>
-                  <span>{p.title}</span>
-                  <small>{p.status}</small>
-                  <ArrowUpRight size={14} />
-                </Link>
-              ))}
-            </div>
+            <dl className="prs-stats">
+              <div>
+                <dt>{regions.length}</dt>
+                <dd>Regions</dd>
+              </div>
+              <div>
+                <dt>{pad(documented)}</dt>
+                <dd>Documented projects</dd>
+              </div>
+              <div>
+                <dt>Mumbai</dt>
+                <dd>Home base</dd>
+              </div>
+            </dl>
           </div>
-          <div className="india-map">
-            <div className="map-rings" />
-            <IndiaOutline />
-            <svg
-              className="map-connections"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-              aria-hidden="true"
+        </div>
+
+        <div className="prs-body">
+          <nav className="prs-list" aria-label="Explore project regions">
+            <div className="prs-list-head" aria-hidden="true">
+              <span>REGION</span>
+              <span>PROJECTS</span>
+            </div>
+            <ol>
+              {regions.map((r, i) => {
+                const n = countFor(r.name);
+                return (
+                  <li key={r.name}>
+                    <button
+                      aria-pressed={i === active}
+                      onClick={() => setActive(i)}
+                    >
+                      <span>{pad(i + 1)}</span>
+                      <strong>{r.name}</strong>
+                      <em>{n ? pad(n) : "—"}</em>
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          </nav>
+          <div className="prs-mobile-select">
+            <label htmlFor="presence-select">EXPLORE A REGION</label>
+            <select
+              id="presence-select"
+              value={active}
+              onChange={(e) => setActive(Number(e.target.value))}
             >
               {regions.map((r, i) => (
-                <path
-                  key={`${r.name}-${active}`}
-                  d={`M27 51 Q${(27 + r.x) / 2 - 8} ${(51 + r.y) / 2 - 10} ${r.x} ${r.y}`}
-                  pathLength="1"
-                  fill="none"
-                  stroke="#c5a55a"
-                  strokeWidth={i === active ? 0.16 : 0.08}
-                  opacity={i === active ? 0.65 : 0.2}
-                />
+                <option value={i} key={r.name}>
+                  {pad(i + 1)} / {r.name}
+                </option>
               ))}
-            </svg>
-            <LazyIndiaMap />
-            {regions.map((r, i) => (
-              <button
-                key={r.name}
-                className={`map-marker ${active === i ? "active" : ""}`}
-                style={{ left: `${r.x}%`, top: `${r.y}%` }}
-                onClick={() => setActive(i)}
-                aria-label={`Explore projects in ${r.name}`}
-                aria-pressed={active === i}
-              >
-                <span />
-                <i>{r.name}</i>
-              </button>
-            ))}
-            <div className="map-legend">
-              <span>
-                <i />
-                Documented regional presence
-              </span>
-              <small>
-                Regional positions are indicative.
-                <br />
-                Presence does not imply an active project. Project status is
-                identified individually.
+            </select>
+          </div>
+
+          <figure className="prs-stage">
+            <span className="prs-tag">
+              <i />
+              Documented regional presence
+            </span>
+            <PresenceMap regions={regions} active={active} onSelect={setActive} />
+
+            <figcaption className="prs-detail" aria-live="polite">
+              <div className="prs-detail-copy" key={region.name}>
+                <span className="prs-eyebrow">
+                  <MapPin size={12} aria-hidden="true" />
+                  {pad(active + 1)} / {pad(regions.length)} · {region.name}
+                </span>
+                <h3>{region.caption}</h3>
+                {list.length === 0 ? (
+                  <p className="prs-note">
+                    The corporate profile records our presence in this region.
+                    Contact our team for individual project details.
+                  </p>
+                ) : (
+                  <ul className="prs-projects">
+                    {list.map((p) => (
+                      <li key={p.slug}>
+                        <Link href={`/projects/${p.slug}/`}>
+                          <span>{p.title}</span>
+                          <small>{p.status}</small>
+                          <ArrowUpRight size={14} aria-hidden="true" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <small className="prs-disclaimer">
+                Regional positions are indicative. Presence does not imply an
+                active project; project status is identified individually.
               </small>
-            </div>
-          </div>
+            </figcaption>
+          </figure>
         </div>
       </div>
     </section>
   );
 }
-function LazyIndiaMap() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    if (
-      window.matchMedia("(prefers-reduced-motion: reduce), (max-width: 600px)")
-        .matches
-    )
-      return;
-    const canvas = document.createElement("canvas");
-    if (!canvas.getContext("webgl2")) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setReady(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "150px" },
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-  return (
-    <div className="india-3d" ref={ref}>
-      {ready && <IndiaMapScene />}
-    </div>
-  );
-}
-function IndiaOutline() {
-  return (
-    <svg
-      className="india-outline"
-      viewBox="0 0 100 110"
-      fill="none"
-      aria-label="Indicative geographic map of India"
-      role="img"
-    >
-      <defs>
-        <pattern
-          id="mapgrid"
-          width="1.7"
-          height="1.7"
-          patternUnits="userSpaceOnUse"
-        >
-          <circle cx=".85" cy=".85" r=".15" fill="#c5a55a" opacity=".35" />
-        </pattern>
-      </defs>
-      {india.rings.map((r, i) => (
-        <path
-          key={i}
-          d={r.map(([x, y], j) => `${j ? "L" : "M"}${x} ${y}`).join(" ") + "Z"}
-          fill="#16305a"
-          stroke="#c5a55a"
-          strokeWidth=".3"
-        />
-      ))}
-    </svg>
-  );
-}
-
 const strengths = [
   {
     icon: ShieldCheck,

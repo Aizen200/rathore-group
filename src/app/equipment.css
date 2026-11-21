@@ -1,5 +1,5 @@
 /* The equipment bank: a numbered spec-sheet list driving a full-bleed photo stage. */
-.equipment-section.fleet-section { display: block; background: #111e2f; color: #f1eee2; padding-block: clamp(72px, 8vw, 120px); --gold: #c5a55a; }
+.equipment-section.fleet-section { display: block; background: #111e2f; color: #f1eee2; padding-block: var(--section-pad); --gold: #c5a55a; }
 .fleet-section .section-label { margin-bottom: 44px; color: #cbc6b9; }
 .fleet-section .section-number { color: #8596ac; }
 .fleet-heading { display: grid; grid-template-columns: 1.4fr 1fr; align-items: end; gap: 8%; margin-bottom: 56px; }
