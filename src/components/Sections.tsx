@@ -387,7 +387,7 @@ function ProjectDialog({
               }
               alt={
                 project.image
-                  ? "Project image from the 2026 corporate profile"
+                  ? project.title
                   : `${project.category} sector illustration; not a photograph of this project`
               }
             />
@@ -401,6 +401,13 @@ function ProjectDialog({
               <MapPin size={15} />
               {project.location}
             </p>
+            {(project.client || project.year) && (
+              <p className="project-client">
+                {project.client}
+                {project.client && project.year && " · "}
+                {project.year && `Completed ${project.year}`}
+              </p>
+            )}
             <p>{project.description}</p>
             {project.value && (
               <div className="project-value">
@@ -527,6 +534,27 @@ export function ProjectShowcase({ full = false }: { full?: boolean }) {
       element.removeEventListener("dragstart", preventImageDrag);
     };
   }, [full, status]);
+  // Projects page: the nav dropdown opens a tab via #completed / #ongoing.
+  useEffect(() => {
+    if (!full) return;
+    const pick = (value: string) => {
+      const s = value.replace("#", "").toLowerCase();
+      if (s !== "completed" && s !== "ongoing") return;
+      setStatus(s === "ongoing" ? "Ongoing" : "Completed");
+      requestAnimationFrame(() =>
+        document.getElementById("projects")?.scrollIntoView({ block: "start" }),
+      );
+    };
+    pick(location.hash);
+    const fromHash = () => pick(location.hash);
+    const fromNav = (e: Event) => pick((e as CustomEvent<string>).detail);
+    addEventListener("hashchange", fromHash);
+    addEventListener("project-status", fromNav);
+    return () => {
+      removeEventListener("hashchange", fromHash);
+      removeEventListener("project-status", fromNav);
+    };
+  }, [full]);
   const filtered = projects.filter(
     (p) =>
       p.status === status &&
@@ -631,7 +659,7 @@ export function ProjectShowcase({ full = false }: { full?: boolean }) {
           }
         }}
       >
-        {filtered.map((p) => (
+        {(full ? filtered : filtered.slice(0, 12)).map((p) => (
           <button
             className="project-card"
             key={p.slug}
@@ -642,11 +670,7 @@ export function ProjectShowcase({ full = false }: { full?: boolean }) {
                 src={
                   p.image?.replace(".jpg", ".webp") || sectorImages[p.category]
                 }
-                alt={
-                  p.image
-                    ? "Project image from the 2026 corporate profile"
-                    : `${p.category} sector illustration`
-                }
+                alt={p.image ? p.title : `${p.category} sector illustration`}
                 loading="lazy"
                 width="850"
                 height="650"
@@ -1067,22 +1091,54 @@ export function TrustSection() {
   const clientGroups: { label: string; note: string; items: [string, string][] }[] = [
     {
       label: "Municipal bodies",
-      note: "Urban water, roads & civic works",
+      note: "Urban roads, water, drainage & civic works",
       items: [
-        ["/images/client-mcgm.webp", "Municipal Corporation of Greater Mumbai"],
-        ["/images/client-thane.webp", "Thane Municipal Corporation"],
-        ["/images/client-vvm.webp", "Vasai Virar City Municipal Corporation"],
-        ["/images/client-jnn.webp", "Jodhpur Municipal Corporation"],
+        ["/images/clients/all/jodhpur-nagar-nigam.webp", "Jodhpur Nagar Nigam"],
+        ["/images/clients/all/mira-bhaindar-mc.webp", "Mira Bhaindar Municipal Corporation"],
+        ["/images/clients/all/mcgm.webp", "Municipal Corporation of Greater Mumbai"],
+        ["/images/clients/all/surat-mc.webp", "Surat Municipal Corporation"],
+        ["/images/clients/all/thane-mc.webp", "Thane Municipal Corporation"],
+        ["/images/clients/all/vasai-virar-mc.webp", "Vasai Virar City Municipal Corporation"],
+        ["/images/clients/all/pune-mc.webp", "Pune Municipal Corporation"],
+        ["/images/clients/all/ambarnath-mc.webp", "Ambarnath Municipal Council"],
+        ["/images/clients/all/kalyan-dombivli-mc.webp", "Kalyan Dombivli Municipal Corporation"],
+        ["/images/clients/all/navi-mumbai-mc.webp", "Navi Mumbai Municipal Corporation"],
+        ["/images/clients/all/nanded-waghala-mc.webp", "Nanded Waghala City Municipal Corporation"],
+        ["/images/clients/all/bhiwandi-nizampur-mc.webp", "Bhiwandi Nizampur City Municipal Corporation"],
+        ["/images/clients/all/panvel-mc.webp", "Panvel Municipal Corporation"],
       ],
     },
     {
-      label: "National agencies",
-      note: "Rail, metro & highway infrastructure",
+      label: "National agencies & PSUs",
+      note: "Highways, rail, ports & public enterprises",
       items: [
-        ["/images/clients/indian-railways.webp", "Indian Railways"],
-        ["/images/clients/mmrda.webp", "MMRDA"],
-        ["/images/clients/bro.webp", "Border Roads Organisation"],
-        ["/images/clients/nhai.webp", "National Highways Authority of India"],
+        ["/images/clients/all/east-central-railway.webp", "Indian Railways (East Central Railway)"],
+        ["/images/clients/all/nbcc.webp", "NBCC (India) Limited"],
+        ["/images/clients/all/nhidcl.webp", "NHIDCL"],
+        ["/images/clients/all/jnpa.webp", "Jawaharlal Nehru Port Authority"],
+        ["/images/clients/all/bro.webp", "Border Roads Organisation"],
+        ["/images/clients/all/nhai.webp", "National Highways Authority of India"],
+        ["/images/clients/all/lic.webp", "Life Insurance Corporation of India"],
+        ["/images/clients/all/ircon-soma-tollway.webp", "Ircon Soma Tollway Pvt. Ltd."],
+      ],
+    },
+    {
+      label: "State boards & authorities",
+      note: "Water, housing, energy & development",
+      items: [
+        ["/images/clients/all/karnataka-neeravari-nigam.webp", "Karnataka Neeravari Nigam Ltd."],
+        ["/images/clients/all/jodhpur-development-authority.webp", "Jodhpur Development Authority"],
+        ["/images/clients/all/phed-rajasthan.webp", "PHED Rajasthan"],
+        ["/images/clients/all/gwssb.webp", "Gujarat Water Supply & Sewerage Board"],
+        ["/images/clients/all/ruidp.webp", "Rajasthan Urban Infrastructure Development Project"],
+        ["/images/clients/all/mmrda.webp", "Mumbai Metropolitan Region Development Authority"],
+        ["/images/clients/all/midc.webp", "Maharashtra Industrial Development Corporation"],
+        ["/images/clients/all/uprnn.webp", "Uttar Pradesh Rajkiya Nirman Nigam"],
+        ["/images/clients/all/msphc.webp", "Maharashtra State Police Housing Corporation"],
+        ["/images/clients/all/bwssb.webp", "Bangalore Water Supply & Sewerage Board"],
+        ["/images/clients/all/ophwc.webp", "Odisha Police Housing & Welfare Corporation"],
+        ["/images/clients/all/upneda.webp", "UP New & Renewable Energy Development Agency"],
+        ["/images/clients/all/madhya-pradesh.webp", "Government of Madhya Pradesh"],
       ],
     },
   ];
@@ -1113,7 +1169,7 @@ export function TrustSection() {
                 {group.items.map(([src, name], i) => (
                   <li className="trust-card" key={name}>
                     <span className="trust-index">
-                      {String(g * group.items.length + i + 1).padStart(2, "0")}
+                      {String(clientGroups.slice(0, g).reduce((n, x) => n + x.items.length, 0) + i + 1).padStart(2, "0")}
                     </span>
                     <div className="trust-logo">
                       <img src={src} alt="" width="110" height="110" loading="lazy" />

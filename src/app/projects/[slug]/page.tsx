@@ -74,6 +74,18 @@ export default async function Page({
                   {p.location}
                 </dd>
               </div>
+              {p.client && (
+                <div>
+                  <dt>CLIENT</dt>
+                  <dd>{p.client}</dd>
+                </div>
+              )}
+              {p.year && (
+                <div>
+                  <dt>YEAR OF COMPLETION</dt>
+                  <dd>{p.year}</dd>
+                </div>
+              )}
               {p.value && (
                 <div>
                   <dt>PROJECT VALUE</dt>
@@ -89,7 +101,7 @@ export default async function Page({
             <figure>
               <img
                 src={p.image.replace(".jpg", ".webp")}
-                alt={`${p.title} image from the 2026 corporate profile`}
+                alt={p.title}
                 width="1200"
                 height="700"
               />

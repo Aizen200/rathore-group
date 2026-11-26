@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import ScrollJourney from "./ScrollJourney";
+import ClientMarquee from "./ClientMarquee";
 import RevealText from "./RevealText";
 import { company } from "@/data/company";
 import {
@@ -98,6 +99,7 @@ export default function Home() {
   return (
     <>
       <ScrollJourney />
+      <ClientMarquee />
       <div id="at-a-glance">
         <Stats />
       </div>

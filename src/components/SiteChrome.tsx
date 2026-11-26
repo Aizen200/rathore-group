@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, ArrowUp, Mail, Phone, X } from "lucide-react";
-import { company } from "@/data/company";
+import { ArrowUpRight, ArrowUp, ChevronDown, Mail, Phone, X } from "lucide-react";
+import { company, projects } from "@/data/company";
 import { usePathname } from "next/navigation";
 import RevealText from "./RevealText";
 
@@ -17,6 +17,14 @@ export function Logo({ small = false }: { small?: boolean }) {
       </span>
     </Link>
   );
+}
+const projectStatuses = [
+  ["Completed", "/projects/#completed"],
+  ["Ongoing", "/projects/#ongoing"],
+] as const;
+/** Lets the projects page switch tabs when the dropdown is used on that same page. */
+function announceStatus(status: string) {
+  window.dispatchEvent(new CustomEvent("project-status", { detail: status }));
 }
 const links = [
   ["About", "/about/"],
@@ -159,6 +167,42 @@ export function Navbar() {
               {links.map(([label, href]) => {
                 const current = norm(active) === norm(href);
                 const lit = norm(target) === norm(href);
+                if (href === "/projects/")
+                  return (
+                    <span
+                      key={href}
+                      className="hdr-dd"
+                      data-href={norm(href)}
+                      onMouseEnter={() => setHovered(href)}
+                    >
+                      <Link
+                        href={href}
+                        className={lit ? "is-lit" : undefined}
+                        aria-current={current ? "page" : undefined}
+                        aria-haspopup="true"
+                        onFocus={() => setHovered(href)}
+                        onBlur={() => setHovered(null)}
+                      >
+                        {label}
+                        <ChevronDown className="hdr-dd-caret" size={13} strokeWidth={2} />
+                      </Link>
+                      <span className="hdr-dd-menu" role="menu">
+                        {projectStatuses.map(([s, url]) => (
+                          <Link
+                            key={s}
+                            href={url}
+                            role="menuitem"
+                            onClick={() => announceStatus(s)}
+                          >
+                            <span>{s} projects</span>
+                            <em>
+                              {String(projects.filter((p) => p.status === s).length).padStart(2, "0")}
+                            </em>
+                          </Link>
+                        ))}
+                      </span>
+                    </span>
+                  );
                 return (
                   <Link
                     key={href}
@@ -218,7 +262,7 @@ export function Navbar() {
         </div>
         <nav aria-label="Mobile navigation" className="hdr-menu-nav">
           {[["Home", "/"], ...links, ["Contact", "/contact/"]].map(
-            ([label, href], i) => (
+            ([label, href], i) => [
               <Link
                 key={href}
                 href={href}
@@ -229,8 +273,28 @@ export function Navbar() {
                 <span>{String(i + 1).padStart(2, "0")}</span>
                 {label}
                 <ArrowUpRight size={22} />
-              </Link>
-            ),
+              </Link>,
+              href === "/projects/" && (
+                <div
+                  key="project-status"
+                  className="hdr-menu-sub"
+                  style={{ animationDelay: `${0.1 + i * 0.05}s` }}
+                >
+                  {projectStatuses.map(([s, url]) => (
+                    <Link
+                      key={s}
+                      href={url}
+                      onClick={() => {
+                        announceStatus(s);
+                        closeMenu();
+                      }}
+                    >
+                      {s}
+                    </Link>
+                  ))}
+                </div>
+              ),
+            ],
           )}
         </nav>
         <div className="hdr-menu-foot">
