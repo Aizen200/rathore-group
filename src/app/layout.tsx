@@ -13,6 +13,8 @@ import "./road-layers.css";
 import "./tunnel.css";
 import "./story.css";
 import "./presence.css";
+import "./animations.css";
+import "./nav.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://rathore-group-legacy.keyursatra.chatgpt.site"),
   title: {

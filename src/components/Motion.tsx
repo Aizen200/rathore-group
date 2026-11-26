@@ -24,8 +24,23 @@ export default function Motion() {
       }
       schedule();
     });
+    let bar = document.querySelector<HTMLElement>(".scroll-progress");
+    if (!bar) { bar = document.createElement("div"); bar.className = "scroll-progress"; document.body.appendChild(bar); }
+    const onPointer = (e: PointerEvent) => {
+      const btn = (e.target as Element | null)?.closest?.<HTMLElement>(".button, .hdr-cta");
+      document.querySelectorAll<HTMLElement>(".button, .hdr-cta").forEach(b => {
+        if (b !== btn) { b.style.removeProperty("--mx"); b.style.removeProperty("--my"); }
+      });
+      if (!btn) return;
+      const r = btn.getBoundingClientRect();
+      btn.style.setProperty("--mx", `${(e.clientX - r.left - r.width / 2) * 0.25}px`);
+      btn.style.setProperty("--my", `${(e.clientY - r.top - r.height / 2) * 0.35}px`);
+    };
+    addEventListener("pointermove", onPointer, { passive: true });
     function update() {
       frame = 0;
+      const max = document.documentElement.scrollHeight - innerHeight;
+      bar!.style.setProperty("--page-progress", String(max > 0 ? scrollY / max : 0));
       for (const section of visibleSections) {
         const rect = section.getBoundingClientRect();
         const progress = Math.max(0, Math.min(1, (innerHeight - rect.top) / (innerHeight + rect.height)));
@@ -84,6 +99,7 @@ export default function Motion() {
       observer.disconnect(); sectionObserver.disconnect(); mutations.disconnect();
       cancelAnimationFrame(frame);
       removeEventListener("scroll", schedule); removeEventListener("resize", schedule);
+      removeEventListener("pointermove", onPointer);
       preference.removeEventListener("change", reduce);
       document.body.classList.remove("motion-enabled");
     };

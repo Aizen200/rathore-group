@@ -1,0 +1,113 @@
+/* ---------- Navbar polish ----------
+   Top: legible over the hero film via a soft scrim. Scrolled: a floating, rounded navy bar. */
+
+/* The header already shows scroll progress; hide the duplicate page-top bar. */
+.scroll-progress { display: none; }
+
+/* Scrim so links read over bright video frames */
+.hdr::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 190px;
+  background: linear-gradient(180deg, #06101ee6 0%, #06101e99 45%, transparent 100%);
+  pointer-events: none;
+  z-index: -1;
+  transition: opacity .4s;
+}
+.hdr.is-scrolled::before { opacity: 0; }
+
+.hdr-strip { color: #e9dcbc; border-color: #ffffff14; }
+.hdr-bar-wrap { border-color: #ffffff14; }
+
+/* Brand */
+.hdr-brand { border-color: #ffffff1f; }
+.hdr-brand img { filter: drop-shadow(0 2px 8px #0008); transition: width .4s var(--hdr-ease), height .4s var(--hdr-ease), transform .6s var(--hdr-ease); }
+.hdr-brand:hover img { transform: rotate(-6deg) scale(1.06); }
+.hdr-brand strong {
+  background: linear-gradient(100deg, #f3e3b8 0%, #c5a55a 45%, #f3e3b8 90%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  transition: background-position .9s var(--hdr-ease);
+}
+.hdr-brand:hover strong { background-position: 100% 0; }
+
+/* Links */
+.hdr-nav a {
+  color: #efe6d2;
+  font-weight: 500;
+  text-shadow: 0 1px 10px #000a;
+  transition: color .3s, opacity .3s;
+}
+.hdr-nav:hover a:not(.is-lit) { opacity: .6; }
+.hdr-nav a.is-lit,
+.hdr-nav a[aria-current="page"] { color: #f6d98f; opacity: 1; }
+
+.hdr-rule {
+  bottom: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #f6d98f 20%, #c5a55a 80%, transparent);
+  transform-origin: center;
+}
+.hdr-rule::before { display: none; }
+
+/* CTA: gold fill with a light sweep */
+.hdr-cta {
+  position: relative;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  height: 44px;
+  background: linear-gradient(135deg, #e3c77f, #c5a55a 55%, #a8873f);
+  color: var(--theme-blue-deep);
+  box-shadow: 0 8px 24px -10px #c5a55acc, inset 0 1px 0 #fff6;
+}
+.hdr-cta span { padding: 0 6px 0 22px; }
+.hdr-cta i {
+  width: 34px; height: 34px; margin: 5px 5px 5px 0; align-self: center;
+  border-radius: 50%;
+  background: var(--theme-blue-deep);
+  color: #f6d98f;
+}
+.hdr-cta::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(110deg, transparent 30%, #ffffff80 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform .8s var(--hdr-ease);
+  pointer-events: none;
+}
+.hdr-cta:hover { background: linear-gradient(135deg, #f0d79a, #d2b166 55%, #b29147); color: var(--theme-blue-deep); }
+.hdr-cta:hover::after { transform: translateX(120%); }
+.hdr-cta:hover i { background: var(--theme-blue-deep); filter: none; }
+
+/* Scrolled: floating rounded bar */
+.hdr.is-scrolled .hdr-bar-wrap {
+  max-width: min(1500px, calc(100% - 32px));
+  margin: 12px auto 0;
+  border: 1px solid #c5a55a38;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #102a4af7, #0a1a30f7);
+  box-shadow: 0 20px 50px -20px #000d, inset 0 1px 0 #ffffff12;
+  animation: hdrDrop .55s var(--hdr-ease) both;
+  overflow: hidden;
+}
+.hdr.is-scrolled .hdr-bar { height: 62px; padding: 0 20px 0 24px; }
+.hdr.is-scrolled .hdr-rule { bottom: 14px; }
+.hdr.is-scrolled .hdr-nav a { text-shadow: none; }
+.hdr.is-scrolled .hdr-cta { height: 40px; }
+.hdr.is-scrolled .hdr-cta i { width: 30px; height: 30px; }
+.hdr.is-scrolled .hdr-progress { height: 2px; bottom: 0; background: linear-gradient(90deg, #c5a55a, #f6d98f); opacity: .9; }
+
+@keyframes hdrDrop { from { transform: translateY(-120%); opacity: 0; } to { transform: none; opacity: 1; } }
+
+@media (max-width: 1100px) {
+  .hdr.is-scrolled .hdr-bar-wrap { max-width: calc(100% - 20px); margin-top: 10px; border-radius: 14px; }
+  .hdr.is-scrolled .hdr-bar { padding: 0 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hdr.is-scrolled .hdr-bar-wrap { animation: none; }
+  .hdr-cta::after { display: none; }
+}

@@ -26,7 +26,6 @@ const PERSPECTIVE = 1000;
 const zAt = (f: number) => -1400 + f * 1700;
 const RING_GAP = 300;
 const RINGS = 20;
-const GLYPHS = "ABCDEFGHJKLMNPRSTUVWXYZ0123456789#/=<>_";
 const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
 
 export default function TunnelHero({
@@ -146,34 +145,18 @@ export default function TunnelHero({
     };
   }, [sectionRef, onChapter, jump, stops]);
 
-  // Title "decodes" from scrambled glyphs, left to right, whenever the chapter changes.
+  // Title fades up whenever the chapter changes.
   useEffect(() => {
     const spans = title.current;
-    const finals = spans.map(s => s?.dataset.text || "");
-    if (reducedRef.current) {
-      spans.forEach((s, k) => s && (s.textContent = finals[k]));
-      return;
-    }
-    const start = performance.now();
-    const duration = 520;
-    let raf = 0;
-    const step = (now: number) => {
-      const t = (now - start) / duration;
-      spans.forEach((s, k) => {
-        if (!s) return;
-        const text = finals[k];
-        let out = "";
-        for (let c = 0; c < text.length; c++) {
-          const reveal = (c / Math.max(1, text.length)) * 0.7 + k * 0.15;
-          out += text[c] === " " || t >= reveal ? text[c] : GLYPHS[(Math.random() * GLYPHS.length) | 0];
-        }
-        s.textContent = out;
-      });
-      if (t < 1.2) raf = requestAnimationFrame(step);
-      else spans.forEach((s, k) => s && (s.textContent = finals[k]));
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
+    spans.forEach(s => s && (s.textContent = s.dataset.text || ""));
+    if (reducedRef.current) return;
+    const anims = spans.map((s, k) =>
+      s?.animate(
+        [{ opacity: 0, transform: "translateY(18px)" }, { opacity: 1, transform: "none" }],
+        { duration: 700, delay: k * 90, easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards" },
+      ),
+    );
+    return () => anims.forEach(a => a?.finish());
   }, [chapter]);
 
   const c = chapters[chapter];
